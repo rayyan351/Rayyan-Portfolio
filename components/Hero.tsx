@@ -34,7 +34,6 @@ export default function Hero() {
               stagger: 0.08,
               ease: "power2.inOut",
             })
-            .from(".hero__dim", { autoAlpha: 0, duration: 0.5, stagger: 0.05 }, "-=0.6")
             .fromTo(
               ".hero__glyphs",
               { strokeDasharray: 1400, strokeDashoffset: 1400, fillOpacity: 0, strokeOpacity: 1 },
@@ -44,7 +43,6 @@ export default function Hero() {
             .to(".hero__glyphs", { fillOpacity: 1, duration: 0.7, stagger: 0.15 }, "-=0.5")
             .to(".hero__glyphs", { strokeOpacity: 0, duration: 0.8 }, "<0.3")
             .to(".hero__guide", { opacity: 0.12, duration: 1 }, "<")
-            .to(".hero__dim", { opacity: 0.35, duration: 1 }, "<")
             .from(".hero__reveal", { y: 18, autoAlpha: 0, duration: 0.9, stagger: 0.1 }, "-=1.1");
         });
 
@@ -56,20 +54,13 @@ export default function Hero() {
 
   return (
     <section className="hero wrap" id="top" ref={root} aria-labelledby="hero-title">
-      <svg
-        className="hero__name"
-        viewBox="0 0 1200 470"
-        role="img"
-        aria-labelledby="hero-title"
-      >
-        <title id="hero-title">Muhammad Rayyan</title>
+      <h1 className="sr-only" id="hero-title">Muhammad Rayyan, full-stack developer</h1>
+      <svg className="hero__name" viewBox="0 0 1200 470" aria-hidden="true">
         <line className="hero__guide hero__guide--dash" x1="4" y1="0" x2="4" y2="470" />
         {LINES.map((l) => (
           <g key={l.text}>
             <line className="hero__guide hero__guide--dash" x1="0" y1={l.base - CAP} x2="1200" y2={l.base - CAP} />
             <line className="hero__guide" x1="0" y1={l.base} x2="1200" y2={l.base} />
-            <text className="hero__dim" x="1200" y={l.base - CAP - 10} textAnchor="end">cap</text>
-            <text className="hero__dim" x="1200" y={l.base - 10} textAnchor="end">baseline</text>
             <text className="hero__glyphs" x="0" y={l.base} aria-hidden="true">
               {l.text}
             </text>
