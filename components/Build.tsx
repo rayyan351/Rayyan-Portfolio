@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { highlight } from "./highlight";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -17,9 +18,9 @@ const STAGES = ["Idea", "Design", "Code", "Ship"] as const;
  * - Tap (phones, short laptops, reduced motion): no pinning; the four stages are tabs that
  *   switch the frame, so the page stays short.
  */
-const SCRUB_QUERY = "(min-width: 900px) and (min-height: 640px) and (prefers-reduced-motion: no-preference)";
+const SCRUB_QUERY = "(min-width: 1100px) and (min-height: 560px) and (prefers-reduced-motion: no-preference)";
 // Where each stage sits along the pinned scroll (matches the timeline below).
-const STAGE_AT = [0.08, 0.37, 0.62, 0.93];
+const STAGE_AT = [0.08, 0.36, 0.6, 0.92];
 
 function jitter(seed: number) {
   const x = Math.sin(seed * 9301 + 49297) * 233280;
@@ -49,36 +50,76 @@ export default function Build({ p, index, total }: { p: Project; index: number; 
           gsap.set(r, { strokeDasharray: len, strokeDashoffset: len, fillOpacity: 0 });
         });
 
+        const frame = el.querySelector(".frame");
+        const dot = el.querySelector<HTMLElement>(".steps__dot");
+        const items = el.querySelectorAll<HTMLElement>(".step");
+        const video = el.querySelector<HTMLVideoElement>(".ship-video");
+        const rowH = items[items.length - 1]?.offsetHeight ?? 44;
+        let pinned = false;
+
+        const playVideo = (on: boolean) => {
+          if (!video) return;
+          if (on) {
+            if (!video.src) video.src = video.dataset.src!;
+            video.play().catch(() => {});
+          } else video.pause();
+        };
+        const setStep = (step: number) => {
+          el.dataset.step = String(step);
+          if (label) label.textContent = STAGES[step];
+          if (dot) gsap.to(dot, { y: step * rowH, duration: 0.55, ease: "power3.out" });
+          playVideo(pinned && step === 3);
+        };
+
         const bounds = [1, 2.2, 3.3];
         const tl = gsap.timeline({
           defaults: { ease: "none" },
           onUpdate: () => {
             const t = tl.time();
             const step = t < bounds[0] ? 0 : t < bounds[1] ? 1 : t < bounds[2] ? 2 : 3;
-            if (el.dataset.step !== String(step)) {
-              el.dataset.step = String(step);
-              if (label) label.textContent = STAGES[step];
-            }
+            if (el.dataset.step !== String(step)) setStep(step);
           },
         });
-        tl.from(".wire__sketch rect", { autoAlpha: 0, stagger: 0.05, duration: 0.6 })
-          .to({}, { duration: 0.4 })
+        // The frame starts tilted on the drafting table and settles flat as the build completes.
+        tl.fromTo(
+          frame,
+          { rotateX: 16, rotateY: -14, rotateZ: 1.5, scale: 0.88, transformPerspective: 1700, transformOrigin: "50% 60%" },
+          { rotateX: 0, rotateY: 0, rotateZ: 0, scale: 1, duration: 3.4, ease: "power1.inOut" },
+          0
+        )
+          // Idea: loose sketch
+          .from(".wire__sketch rect", { autoAlpha: 0, stagger: 0.05, duration: 0.6 }, 0)
+          // Design: precise blueprint lines replace the sketch
           .to(".wire__sketch", { autoAlpha: 0, duration: 0.4 }, 1)
           .to(crisp, { strokeDashoffset: 0, stagger: 0.05, duration: 0.6 }, 1)
           .to(crisp, { fillOpacity: 1, duration: 0.3 }, 1.6)
           .from(".wire__dim", { autoAlpha: 0, duration: 0.2 }, 1.6)
-          .to({}, { duration: 0.3 })
-          .fromTo(".tree", { xPercent: 12, autoAlpha: 0 }, { xPercent: 0, autoAlpha: 1, duration: 0.3 }, 2.2)
-          .from(".tree li", { autoAlpha: 0, x: -8, stagger: 0.05, duration: 0.15 }, 2.35)
-          .to({}, { duration: 0.3 })
-          .fromTo(".shot", { clipPath: "inset(0% 0% 100% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.8, ease: "power1.inOut" }, 3.3)
-          .to(".tree", { xPercent: 12, autoAlpha: 0, duration: 0.3 }, 3.3)
-          .to({}, { duration: 0.4 });
+          // Code: the real folder structure, then real code from the repo types in line by line
+          .fromTo(".tree", { xPercent: 10, autoAlpha: 0 }, { xPercent: 0, autoAlpha: 1, duration: 0.3 }, 2.2)
+          .from(".tree li", { autoAlpha: 0, x: -8, stagger: 0.04, duration: 0.12 }, 2.3)
+          .fromTo(".code", { y: 28, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.25 }, 2.25)
+          .fromTo(".code__src", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", stagger: 0.07, duration: 0.14 }, 2.35)
+          // Ship: the finished site wipes in, then the real footage takes over
+          .fromTo(".shot", { clipPath: "inset(0% 0% 100% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.7, ease: "power1.inOut" }, 3.3)
+          .to([".tree", ".code"], { autoAlpha: 0, y: -14, duration: 0.3 }, 3.3)
+          .fromTo(".ship-video", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.35 }, 3.95)
+          .to({}, { duration: 0.6 });
 
-        ScrollTrigger.create({ trigger: el, start: "top top", end: "bottom bottom", scrub: 0.6, animation: tl });
+        ScrollTrigger.create({
+          trigger: el,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 0.6,
+          animation: tl,
+          onToggle: (self) => {
+            pinned = self.isActive;
+            playVideo(pinned && el.dataset.step === "3");
+          },
+        });
 
         return () => {
           scrubbed.current = false;
+          video?.pause();
           el.classList.remove("is-scrubbed");
           delete el.dataset.step;
         };
@@ -139,6 +180,9 @@ export default function Build({ p, index, total }: { p: Project; index: number; 
               <text className="wire__dim" x="1420" y="884" textAnchor="end">1440 × 900</text>
             </svg>
             <img className="shot" src={p.shot} alt={p.shotAlt} loading="lazy" decoding="async" />
+            {p.video && (
+              <video className="ship-video" data-src={p.video} poster={p.shot} muted loop playsInline preload="none" aria-hidden="true" tabIndex={-1} />
+            )}
             <div className="tree" aria-hidden="true">
               <p className="tree__title">Project structure</p>
               <ul>
@@ -153,10 +197,27 @@ export default function Build({ p, index, total }: { p: Project; index: number; 
                 ))}
               </ul>
             </div>
+            {p.excerpt && (
+              <div className="code" aria-hidden="true">
+                <p className="code__file">{p.excerpt.file}</p>
+                <pre>
+                  <code>
+                    {p.excerpt.lines.map((l, i) => (
+                      <span className="code__line" key={i}>
+                        <span className="code__ln">{i + 1}</span>
+                        <span className="code__src">{l ? highlight(l) : " "}</span>
+                      </span>
+                    ))}
+                  </code>
+                </pre>
+              </div>
+            )}
           </div>
         </div>
 
         <div className="build__body">
+          <div className="steps-wrap">
+          <span className="steps__dot" aria-hidden="true" />
           <ol className="steps" aria-label={`How ${p.name} was built`}>
             {STAGES.map((s, i) => (
               <li className="step" key={s}>
@@ -172,6 +233,7 @@ export default function Build({ p, index, total }: { p: Project; index: number; 
               </li>
             ))}
           </ol>
+          </div>
 
           <div className="build__links">
             {p.live && (

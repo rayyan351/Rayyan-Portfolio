@@ -16,6 +16,8 @@ export type Project = {
   mobileShot: string;
   steps: [string, string, string, string]; // idea, design, code, ship
   accent: string;
+  video?: string;
+  excerpt?: { file: string; lines: string[] };
   wireframe: Rect[];
   tree: TreeLine[];
 };
@@ -23,6 +25,8 @@ export type Project = {
 export const projects: Project[] = [
   {
     id: "boc",
+    video: "/reel/boc.mp4",
+    excerpt: { file: "back-end/utils/branchRoutingEngine.js", lines: ["const activeQueueCount = await Order.countDocuments({", "  branch: selectedBranch._id,", "  orderStatus: { $in: ['PENDING', 'PREPARING'] },", "});", "", "const prepTime = 15;", "const travelTime = Math.ceil(distKm * 2.5);", "const queueBuffer = Math.min(Math.floor(activeQueueCount / 2) * 3, 25);", "calculatedETA = prepTime + travelTime + queueBuffer;"] },
     name: "Burger O'Clock",
     kind: "Ordering platform and admin system, internship at CodeLabs",
     year: "2026",
@@ -66,11 +70,13 @@ export const projects: Project[] = [
   },
   {
     id: "cypress",
+    video: "/reel/cypress.mp4",
+    excerpt: { file: "app/eat/brunch/page.tsx", lines: ["export default function BrunchPage() {", "  return (", "    <div className=\"menu-page\">", "      <h1 className=\"menu-title\">New Orleans Brunch</h1>", "      {/* … */}", "      <div className=\"menu-section\">", "        <h2>Brunch Specialties</h2>", "        <div className=\"menu-item\">", "          <div className=\"menu-left\">", "            <h4>Creole Eggs Benedict</h4>"] },
     accent: "#1fa192",
     name: "Cypress Grill",
     kind: "Restaurant website",
     year: "2025",
-    stack: ["Next.js", "React", "CSS"],
+    stack: ["Next.js", "React", "TypeScript", "CSS"],
     live: "https://cypress-grill.vercel.app",
     code: "https://github.com/rayyan351/CypressGrill",
     shot: "/work/cypress-desktop-hero.webp",
@@ -100,7 +106,7 @@ export const projects: Project[] = [
       { depth: 2, name: "cajun/", dir: true },
       { depth: 1, name: "catering", dir: true },
       { depth: 1, name: "drinks", dir: true },
-      { depth: 1, name: "page.jsx" },
+      { depth: 1, name: "page.tsx" },
       { depth: 0, name: "components", dir: true },
       { depth: 1, name: "Navbar.jsx" },
       { depth: 1, name: "Hero.jsx" },
@@ -110,6 +116,8 @@ export const projects: Project[] = [
   },
   {
     id: "luxscents",
+    video: "/reel/luxscents.mp4",
+    excerpt: { file: "src/context/CartContext.js", lines: ["const addToCart = (product) => {", "  const existing = cartItems.find(item => item.id === product.id);", "  if (existing) {", "    setCartItems(cartItems.map(item =>", "      item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item", "    ));", "  } else {", "    setCartItems([...cartItems, { ...product, quantity: 1 }]);", "  }", "};"] },
     accent: "#c9a45c",
     name: "LuxScents",
     kind: "Full-stack perfume store",
@@ -154,6 +162,8 @@ export const projects: Project[] = [
   },
   {
     id: "functions",
+    video: "/reel/functions.mp4",
+    excerpt: { file: "src/components/Hero.tsx", lines: ["export function Hero() {", "  const { scrollY } = useScroll();", "  const y = useTransform(scrollY, [0, 500], [0, 150]);", "  const opacity = useTransform(scrollY, [0, 300], [1, 0]);", "", "  return (", "    <section className=\"relative min-h-screen pt-20 overflow-hidden\">"] },
     accent: "#5b5bd6",
     name: "Functions Global",
     kind: "Agency homepage, Figma to React",
@@ -202,10 +212,10 @@ export const projects: Project[] = [
 export const moreWork = [
   {
     name: "Nexus Infinity Tech",
-    kind: "Company website, built on contract. The client has since retired the site.",
+    kind: "Company website, built on contract. Archived after the client retired the domain.",
     stack: "React, GSAP, Three.js",
-    live: "https://github.com/rayyan351/NEXUS-FRONTEND",
-    go: "Code",
+    live: "https://nexus-frontend-ashen-kappa.vercel.app",
+    go: "Archive",
   },
   {
     name: "Modern Engineering Works",
@@ -247,21 +257,22 @@ export const reel: ReelItem[] = [
   { id: "functions", name: "Functions Global", kind: "Agency homepage", video: "/reel/functions.mp4", poster: "/reel/functions.webp", href: "#build-functions", action: "See how it's built", accent: "#5b5bd6" },
   { id: "salon", name: "Salon Luxe", kind: "Booking-focused salon site", video: "/reel/salon.mp4", poster: "/reel/salon.webp", href: "https://hair-salon-weld-three.vercel.app", action: "Visit the site", accent: "#c98a7a" },
   { id: "mew", name: "Modern Engineering Works", kind: "Engineering firm website", video: "/reel/mew.mp4", poster: "/reel/mew.webp", href: "https://modern-engineering-works.vercel.app", action: "Visit the site", accent: "#2f80d1" },
-  { id: "nexus", name: "Nexus Infinity Tech", kind: "Company website, now retired", video: "/reel/nexus.mp4", poster: "/reel/nexus.webp", href: "https://github.com/rayyan351/NEXUS-FRONTEND", action: "Read the code", accent: "#8b5cf6" },
+  { id: "nexus", name: "Nexus Infinity Tech", kind: "Company website, now retired", video: "/reel/nexus.mp4", poster: "/reel/nexus.webp", href: "https://nexus-frontend-ashen-kappa.vercel.app", action: "See the archived build", accent: "#8b5cf6" },
 ];
 
 
-export type Commit = { lane: "study" | "work" | "now"; year: string; title: string; body: string };
+export type Art = "first-html" | "grades" | "society" | "calls" | "semester" | "nexus" | "boc" | "now";
+export type Commit = { lane: "study" | "work" | "now"; year: string; title: string; short: string; body: string; art: Art };
 
 export const history: Commit[] = [
-  { lane: "study", year: "2022", title: "Learned HTML and CSS from YouTube", body: "My first project was a rebuild of the YouTube interface." },
-  { lane: "study", year: "2023", title: "Aptech diploma, with Distinction", body: "PHP, Laravel, JavaScript and MySQL, with 96 out of 100 in practicals." },
-  { lane: "work", year: "2023", title: "Websites for my college's science society", body: "Designed and ran the society's WordPress sites at Sceptre College, and was on the IT team for Sceptre Sonic II." },
-  { lane: "work", year: "2024", title: "Customer service at ibex", body: "Daily calls with US customers, first for DM Clinical Research and then for Walmart." },
-  { lane: "study", year: "2025", title: "BS Artificial Intelligence, Bahria University", body: "Alongside it, a data analytics program in SQL and PostgreSQL, and the design team for Teknofest Pre-Event '25." },
-  { lane: "work", year: "2025", title: "Nexus Infinity Tech website, on contract", body: "Designed and built a London company's site with React, GSAP and Three.js." },
-  { lane: "work", year: "2026", title: "Software development intern at CodeLabs", body: "Built Burger O'Clock's ordering platform and admin system in a month." },
-  { lane: "now", year: "Now", title: "Studying AI and building for clients", body: "Open to remote and freelance work in the evenings, Pakistan time, which overlaps with US mornings." },
+  { lane: "study", year: "2022", title: "Learned HTML and CSS from YouTube", short: "First lines of code", art: "first-html", body: "My first project was a rebuild of the YouTube interface." },
+  { lane: "study", year: "2023", title: "Aptech diploma, with Distinction", short: "Aptech diploma", art: "grades", body: "PHP, Laravel, JavaScript and MySQL, with 96 out of 100 in practicals." },
+  { lane: "work", year: "2023", title: "Websites for my college's science society", short: "Society websites", art: "society", body: "Designed and ran the society's WordPress sites at Sceptre College, and was on the IT team for Sceptre Sonic II." },
+  { lane: "work", year: "2024", title: "Customer service at ibex", short: "ibex", art: "calls", body: "Daily calls with US customers, first for DM Clinical Research and then for Walmart." },
+  { lane: "study", year: "2025", title: "BS Artificial Intelligence, Bahria University", short: "Bahria University", art: "semester", body: "Alongside it, a data analytics program in SQL and PostgreSQL, and the design team for Teknofest Pre-Event '25." },
+  { lane: "work", year: "2025", title: "Nexus Infinity Tech website, on contract", short: "Nexus Infinity Tech", art: "nexus", body: "Designed and built a London company's site with React, GSAP and Three.js." },
+  { lane: "work", year: "2026", title: "Software development intern at CodeLabs", short: "CodeLabs internship", art: "boc", body: "Built Burger O'Clock's ordering platform and admin system in a month." },
+  { lane: "now", year: "Now", title: "Studying AI and building for clients", short: "Now", art: "now", body: "Open to remote and freelance work in the evenings, Pakistan time, which overlaps with US mornings." },
 ];
 
 export const contact = {

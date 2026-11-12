@@ -1,7 +1,7 @@
 import Nav from "../components/Nav";
 import Hero from "../components/Hero";
 import Build from "../components/Build";
-import CommitGraph from "../components/CommitGraph";
+import About from "../components/About";
 import Reel from "../components/Reel";
 import SceneTint from "../components/SceneTint";
 import SmoothScroll from "../components/SmoothScroll";
@@ -54,18 +54,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="about" className="section" aria-labelledby="about-title">
-          <div className="wrap">
-            <div className="section__head">
-              <h2 className="section__title" id="about-title">How I got here</h2>
-              <p className="section__intro">
-                I care about the parts most people skip: how a project is structured, how it reads on
-                a phone, and whether the next developer can find their way around the code.
-              </p>
-            </div>
-            <CommitGraph />
-          </div>
-        </section>
+        <About />
 
         <section id="contact" className="contact" aria-labelledby="contact-title">
           <div className="wrap">
