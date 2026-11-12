@@ -89,7 +89,7 @@ export default function Build({ p, index, total }: { p: Project; index: number; 
   const host = p.live ? new URL(p.live).host : p.name;
 
   return (
-    <article className="build" ref={root} aria-labelledby={`${p.id}-name`}>
+    <article className="build" id={`build-${p.id}`} ref={root} aria-labelledby={`${p.id}-name`}>
       <div className="wrap build__stage">
         <div className="build__meta">
           <p className="build__count">

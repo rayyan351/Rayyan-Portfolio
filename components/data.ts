@@ -178,6 +178,29 @@ export const moreWork = [
   },
 ];
 
+export type ReelItem = {
+  id: string;
+  name: string;
+  kind: string;
+  video: string;
+  poster: string;
+  /** In-page build section for featured projects, otherwise the live site. */
+  href: string;
+  action: string;
+};
+
+export const reel: ReelItem[] = [
+  { id: "luxscents", name: "LuxScents", kind: "Full-stack perfume store", video: "/reel/luxscents.mp4", poster: "/reel/luxscents.webp", href: "#build-luxscents", action: "See how it's built" },
+  { id: "cypress", name: "Cypress Grill", kind: "Restaurant website", video: "/reel/cypress.mp4", poster: "/reel/cypress.webp", href: "#build-cypress", action: "See how it's built" },
+  { id: "beast", name: "BEAST", kind: "Cinematic landing page", video: "/reel/beast.mp4", poster: "/reel/beast.webp", href: "https://cinematiclandingpage.vercel.app", action: "Visit the site" },
+  { id: "functions", name: "Functions Global", kind: "Agency homepage", video: "/reel/functions.mp4", poster: "/reel/functions.webp", href: "#build-functions", action: "See how it's built" },
+  { id: "salon", name: "Salon Luxe", kind: "Booking-focused salon site", video: "/reel/salon.mp4", poster: "/reel/salon.webp", href: "https://hair-salon-weld-three.vercel.app", action: "Visit the site" },
+  { id: "mew", name: "Modern Engineering Works", kind: "Engineering firm website", video: "/reel/mew.mp4", poster: "/reel/mew.webp", href: "https://modern-engineering-works.vercel.app", action: "Visit the site" },
+  { id: "nexus", name: "Nexus Infinity Tech", kind: "Company website, on contract", video: "/reel/nexus.mp4", poster: "/reel/nexus.webp", href: "https://nexusinftech.it.com", action: "Visit the site" },
+];
+
+export const reelTiles = reel.flatMap((r) => [`/reel/tile-${r.id}-0.webp`, `/reel/tile-${r.id}-1.webp`]);
+
 export const timeline = [
   { year: "2022", title: "Started with HTML and CSS", body: "Learned from YouTube and rebuilt the YouTube interface as my first project." },
   { year: "2023", title: "Aptech diploma and first real sites", body: "Learned PHP and JavaScript, then built and ran the WordPress sites for my college's science and technology society." },

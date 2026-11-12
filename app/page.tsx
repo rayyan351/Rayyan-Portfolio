@@ -2,6 +2,7 @@ import Nav from "../components/Nav";
 import Hero from "../components/Hero";
 import Build from "../components/Build";
 import Timeline from "../components/Timeline";
+import Reel from "../components/Reel";
 import SmoothScroll from "../components/SmoothScroll";
 import { projects, moreWork, contact } from "../components/data";
 
@@ -15,11 +16,13 @@ export default function Home() {
       <main>
         <Hero />
 
-        <section id="work" className="section" aria-labelledby="work-title" style={{ paddingBottom: 0 }}>
+        <Reel />
+
+        <section className="section work-intro" aria-labelledby="builds-title" style={{ paddingBottom: 0 }}>
           <div className="wrap section__head">
-            <h2 className="section__title" id="work-title">Selected work</h2>
+            <h2 className="section__title" id="builds-title">How they were built</h2>
             <p className="section__intro">
-              Each project is shown the way I build it: the brief, the design, the code structure,
+              Three of these, taken apart the way I work: the brief, the design, the code structure,
               and the site that went live. Scroll through each one.
             </p>
           </div>
