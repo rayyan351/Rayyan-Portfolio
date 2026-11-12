@@ -1,7 +1,7 @@
 import Nav from "../components/Nav";
 import Hero from "../components/Hero";
 import Build from "../components/Build";
-import Timeline from "../components/Timeline";
+import CommitGraph from "../components/CommitGraph";
 import Reel from "../components/Reel";
 import SceneTint from "../components/SceneTint";
 import SmoothScroll from "../components/SmoothScroll";
@@ -25,7 +25,7 @@ export default function Home() {
             <h2 className="section__title" id="builds-title">How they were built</h2>
             <p className="section__intro">
               Four of these, taken apart the way I work: the brief, the design, the code structure,
-              and the site that went live. Scroll through each one.
+              and the site that went live. Step through each one.
             </p>
           </div>
           {projects.map((p, i) => (
@@ -46,7 +46,7 @@ export default function Home() {
                     <span className="more__name">{m.name}</span>
                     <span className="more__kind">{m.kind}</span>
                     <span className="more__stack">{m.stack}</span>
-                    <span className="more__go">Visit</span>
+                    <span className="more__go">{"go" in m && m.go ? m.go : "Visit"}</span>
                   </a>
                 </li>
               ))}
@@ -63,7 +63,7 @@ export default function Home() {
                 a phone, and whether the next developer can find their way around the code.
               </p>
             </div>
-            <Timeline />
+            <CommitGraph />
           </div>
         </section>
 

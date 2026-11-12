@@ -9,6 +9,7 @@ export type Project = {
   year: string;
   stack: string[];
   live?: string;
+  liveLabel?: string;
   code?: string;
   shot: string;
   shotAlt: string;
@@ -201,9 +202,10 @@ export const projects: Project[] = [
 export const moreWork = [
   {
     name: "Nexus Infinity Tech",
-    kind: "Company website, built on contract",
+    kind: "Company website, built on contract. The client has since retired the site.",
     stack: "React, GSAP, Three.js",
-    live: "https://nexusinftech.it.com",
+    live: "https://github.com/rayyan351/NEXUS-FRONTEND",
+    go: "Code",
   },
   {
     name: "Modern Engineering Works",
@@ -245,16 +247,21 @@ export const reel: ReelItem[] = [
   { id: "functions", name: "Functions Global", kind: "Agency homepage", video: "/reel/functions.mp4", poster: "/reel/functions.webp", href: "#build-functions", action: "See how it's built", accent: "#5b5bd6" },
   { id: "salon", name: "Salon Luxe", kind: "Booking-focused salon site", video: "/reel/salon.mp4", poster: "/reel/salon.webp", href: "https://hair-salon-weld-three.vercel.app", action: "Visit the site", accent: "#c98a7a" },
   { id: "mew", name: "Modern Engineering Works", kind: "Engineering firm website", video: "/reel/mew.mp4", poster: "/reel/mew.webp", href: "https://modern-engineering-works.vercel.app", action: "Visit the site", accent: "#2f80d1" },
-  { id: "nexus", name: "Nexus Infinity Tech", kind: "Company website, on contract", video: "/reel/nexus.mp4", poster: "/reel/nexus.webp", href: "https://nexusinftech.it.com", action: "Visit the site", accent: "#8b5cf6" },
+  { id: "nexus", name: "Nexus Infinity Tech", kind: "Company website, now retired", video: "/reel/nexus.mp4", poster: "/reel/nexus.webp", href: "https://github.com/rayyan351/NEXUS-FRONTEND", action: "Read the code", accent: "#8b5cf6" },
 ];
 
 
-export const timeline = [
-  { year: "2022", title: "Started with HTML and CSS", body: "Learned from YouTube and rebuilt the YouTube interface as my first project." },
-  { year: "2023", title: "Aptech diploma and first real sites", body: "Learned PHP and JavaScript, then built and ran the WordPress sites for my college's science and technology society." },
-  { year: "2024", title: "React, Express and Next.js", body: "Taught myself the modern stack, while working with international customers at IBEX Global." },
-  { year: "2025", title: "BS in Artificial Intelligence", body: "Started at Bahria University Karachi. Built the Nexus Infinity Tech website on contract and completed a data analytics training program in SQL and PostgreSQL." },
-  { year: "2026", title: "Full-stack internship at CodeLabs", body: "Rebuilt Burger O'Clock's ordering site and built its admin system in one month: branches, staff roles, inventory, recipes and purchasing. Now taking on remote and freelance projects." },
+export type Commit = { lane: "study" | "work" | "now"; year: string; title: string; body: string };
+
+export const history: Commit[] = [
+  { lane: "study", year: "2022", title: "Learned HTML and CSS from YouTube", body: "My first project was a rebuild of the YouTube interface." },
+  { lane: "study", year: "2023", title: "Aptech diploma, with Distinction", body: "PHP, Laravel, JavaScript and MySQL, with 96 out of 100 in practicals." },
+  { lane: "work", year: "2023", title: "Websites for my college's science society", body: "Designed and ran the society's WordPress sites at Sceptre College, and was on the IT team for Sceptre Sonic II." },
+  { lane: "work", year: "2024", title: "Customer service at ibex", body: "Daily calls with US customers, first for DM Clinical Research and then for Walmart." },
+  { lane: "study", year: "2025", title: "BS Artificial Intelligence, Bahria University", body: "Alongside it, a data analytics program in SQL and PostgreSQL, and the design team for Teknofest Pre-Event '25." },
+  { lane: "work", year: "2025", title: "Nexus Infinity Tech website, on contract", body: "Designed and built a London company's site with React, GSAP and Three.js." },
+  { lane: "work", year: "2026", title: "Software development intern at CodeLabs", body: "Built Burger O'Clock's ordering platform and admin system in a month." },
+  { lane: "now", year: "Now", title: "Studying AI and building for clients", body: "Open to remote and freelance work in the evenings, Pakistan time, which overlaps with US mornings." },
 ];
 
 export const contact = {

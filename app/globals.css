@@ -115,6 +115,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 20px;
   height: 68px;
 }
 .nav__name {
@@ -277,11 +278,27 @@ a {
 .build__stage {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 32px;
-  padding-top: 56px;
+  grid-template-areas: "head" "frame" "body";
+  gap: 22px;
+  padding-top: 48px;
   padding-bottom: 56px;
+  /* Transparent parts of a stage never block clicks on the section underneath. */
+  pointer-events: none;
 }
-.build__meta {
+.build__head,
+.build__body,
+.build .frame {
+  pointer-events: auto;
+}
+.build__head {
+  grid-area: head;
+  max-width: 34rem;
+}
+.build .frame {
+  grid-area: frame;
+}
+.build__body {
+  grid-area: body;
   max-width: 34rem;
 }
 .build__count {
@@ -300,9 +317,10 @@ a {
 .build__kind {
   margin: 0 0 4px;
   font-size: 18px;
+  line-height: 1.4;
 }
 .build__stack {
-  margin: 0 0 28px;
+  margin: 0;
   color: var(--muted);
   font-size: 15px;
 }
@@ -331,8 +349,19 @@ a {
   transition: color 0.3s;
 }
 .step__label {
+  font: inherit;
   font-weight: 600;
-  transition: color 0.3s;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  text-align: left;
+  justify-self: start;
+  cursor: pointer;
+  transition: color 0.3s, border-color 0.3s;
+}
+.step__label:hover {
+  color: var(--brass);
 }
 .step__text {
   grid-column: 2;
@@ -484,16 +513,102 @@ a {
   opacity: 0.85;
 }
 
-/* Static layout (mobile, reduced motion, no JS): final state, tree below frame */
+/* Tap layout (phones, short laptops, reduced motion): the four stages are tabs that switch the frame. */
+.build:not(.is-scrubbed) .canvas {
+  container-type: inline-size;
+}
 .build:not(.is-scrubbed) .wire__sketch,
-.build:not(.is-scrubbed) .wire__crisp {
-  display: none;
+.build:not(.is-scrubbed) .wire__crisp,
+.build:not(.is-scrubbed) .tree,
+.build:not(.is-scrubbed) .shot {
+  opacity: 0;
+  transition: opacity 0.45s var(--ease);
+}
+.build:not(.is-scrubbed)[data-tap="0"] .wire__sketch,
+.build:not(.is-scrubbed)[data-tap="1"] .wire__crisp,
+.build:not(.is-scrubbed)[data-tap="2"] .wire__crisp,
+.build:not(.is-scrubbed)[data-tap="2"] .tree,
+.build:not(.is-scrubbed)[data-tap="3"] .shot {
+  opacity: 1;
 }
 .build:not(.is-scrubbed) .tree {
+  inset: 5% 4%;
+  width: auto;
+  font-size: clamp(7.5px, 2.2cqw, 13px);
+  line-height: 1.45;
+  padding: 3cqw 3.5cqw;
+  overflow: hidden;
+}
+.build:not(.is-scrubbed) .tree__title {
+  font-size: clamp(10px, 2.4cqw, 12.5px);
+  margin-bottom: 1.2cqw;
+}
+.build:not(.is-scrubbed) .steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0 0 22px;
+}
+.build:not(.is-scrubbed) .step {
+  display: contents;
+}
+.build:not(.is-scrubbed) .step::before {
+  content: none;
+}
+.build:not(.is-scrubbed) .step__label {
+  grid-row: 1;
+  justify-self: stretch;
+  text-align: center;
+  padding: 12px 4px 11px;
+  font-size: 15px;
+  color: var(--muted);
+  border-bottom: 2px solid var(--line);
+}
+.build:not(.is-scrubbed) .step__label[aria-pressed="true"] {
+  color: var(--text);
+  border-bottom-color: var(--brass);
+}
+.build:not(.is-scrubbed) .step__text {
+  grid-row: 2;
+  grid-column: 1 / -1;
   display: none;
+  margin: 16px 0 0;
+  min-height: 4.65em;
+}
+.build:not(.is-scrubbed)[data-tap="0"] .step:nth-child(1) .step__text,
+.build:not(.is-scrubbed)[data-tap="1"] .step:nth-child(2) .step__text,
+.build:not(.is-scrubbed)[data-tap="2"] .step:nth-child(3) .step__text,
+.build:not(.is-scrubbed)[data-tap="3"] .step:nth-child(4) .step__text {
+  display: block;
+  animation: step-in 0.4s var(--ease);
+}
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
 }
 
-/* Scrubbed layout (desktop with motion) */
+/* Wide screens: text on the left, frame on the right. */
+@media (min-width: 900px) {
+  .build__stage {
+    grid-template-columns: minmax(300px, 0.78fr) minmax(0, 1.5fr);
+    /* Empty rows above and below keep the text block centred beside the frame as one group. */
+    grid-template-areas: ". frame" "head frame" "body frame" ". frame";
+    grid-template-rows: 1fr auto auto 1fr;
+    column-gap: clamp(32px, 4vw, 72px);
+    row-gap: 0;
+    padding-top: 96px;
+    padding-bottom: 96px;
+  }
+  .build .frame {
+    align-self: center;
+  }
+  .build__body {
+    margin-top: 24px;
+  }
+}
+
+/* Scrubbed layout (wide, tall screens with motion) */
 .build.is-scrubbed {
   height: 440vh;
 }
@@ -501,11 +616,8 @@ a {
   position: sticky;
   top: 0;
   height: 100vh;
-  grid-template-columns: minmax(300px, 0.78fr) minmax(0, 1.5fr);
-  align-items: center;
-  gap: clamp(32px, 4vw, 72px);
   padding-top: 84px;
-  padding-bottom: 40px;
+  padding-bottom: 32px;
 }
 .build.is-scrubbed .step__text {
   display: grid;
@@ -537,6 +649,40 @@ a {
 }
 .build.is-scrubbed .step__label {
   color: var(--muted);
+}
+
+/* Short laptop screens: tighten the text column so it always fits beside the frame. */
+@media (min-width: 900px) and (max-height: 820px) {
+  .build__count {
+    margin-bottom: 6px;
+  }
+  .build__name {
+    font-size: clamp(30px, 3.2vw, 44px);
+    margin-bottom: 8px;
+  }
+  .build__kind {
+    font-size: 16px;
+  }
+  .build__stack {
+    font-size: 14px;
+  }
+  .build__body {
+    margin-top: 18px;
+  }
+  .step {
+    padding: 9px 0;
+  }
+  .step__text {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .steps {
+    margin-bottom: 20px;
+  }
+  .build.is-scrubbed .build__stage {
+    padding-top: 76px;
+    padding-bottom: 20px;
+  }
 }
 
 /* ---------- More work ---------- */
@@ -587,78 +733,146 @@ a {
   color: var(--brass);
 }
 
-/* ---------- Timeline ---------- */
+/* ---------- About: commit graph ---------- */
 
-.timeline {
+.graph {
+  --lane-study: 18px;
+  --lane-work: 62px;
+  --gutter-graph: 92px;
   position: relative;
+  max-width: 56rem;
 }
-.timeline__list {
+.graph__legend {
+  display: flex;
+  gap: 22px;
+  margin: 0 0 32px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+}
+.graph__key {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.graph__key::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.graph__key--study::before {
+  background: var(--blueprint);
+}
+.graph__key--work::before {
+  background: var(--brass);
+}
+.graph__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.graph__path {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.graph__path--track {
+  stroke: var(--line);
+}
+.graph__path--study {
+  stroke: var(--blueprint);
+  stroke-dasharray: 1;
+}
+.graph__path--work {
+  stroke: var(--brass);
+  stroke-dasharray: 1;
+}
+.graph__list {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-.timeline__track {
-  position: absolute;
-  left: calc(9rem + 24px);
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: var(--line);
-}
-.timeline__fill {
-  position: absolute;
-  inset: 0;
-  background: var(--brass);
-  transform-origin: top;
-  transform: scaleY(1);
-}
-.tl {
-  display: grid;
-  grid-template-columns: 9rem minmax(0, 38rem);
-  column-gap: 48px;
-  padding: 0 0 56px;
+.commit {
   position: relative;
+  display: grid;
+  grid-template-columns: var(--gutter-graph) 4.6rem minmax(0, 1fr);
+  padding-bottom: 46px;
 }
-.tl:last-child {
+.commit:last-child {
   padding-bottom: 0;
 }
-.tl::after {
-  content: "";
+.commit__dot {
+  --x: var(--lane-study);
   position: absolute;
-  left: calc(9rem + 19px);
-  top: 14px;
-  width: 11px;
-  height: 11px;
+  left: calc(var(--x) - 7px);
+  top: 0.5em;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: var(--bg);
-  border: 1px solid var(--muted);
-  transition: background 0.4s, border-color 0.4s;
+  border: 2px solid var(--muted);
+  z-index: 1;
+  transition: background 0.4s, border-color 0.4s, box-shadow 0.4s;
 }
-.tl__year {
-  font-size: clamp(32px, 3.4vw, 48px);
+.commit--work .commit__dot {
+  --x: var(--lane-work);
+}
+.commit__year {
+  grid-column: 2;
+  font-size: 17px;
   font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1;
+  line-height: 1.6;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
   transition: color 0.4s;
 }
-.tl__title {
-  margin: 4px 0 6px;
-  font-size: 22px;
-  letter-spacing: -0.01em;
-  font-weight: 600;
+.commit__main {
+  grid-column: 3;
 }
-.tl__body {
+.commit__title {
+  margin: 0 0 4px;
+  font-size: 20px;
+  line-height: 1.35;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.commit__body {
   margin: 0;
   color: var(--muted);
+  max-width: 38em;
 }
-.tl.is-on .tl__year {
+.commit.is-on .commit__year {
   color: var(--text);
 }
-.tl.is-on::after {
+.commit--study.is-on .commit__dot {
+  background: var(--blueprint);
+  border-color: var(--blueprint);
+}
+.commit--work.is-on .commit__dot {
   background: var(--brass);
   border-color: var(--brass);
+}
+.commit--now .commit__dot {
+  width: 20px;
+  height: 20px;
+  left: calc(var(--x) - 10px);
+  top: 0.35em;
+}
+.commit--now.is-on .commit__dot {
+  background: var(--brass);
+  border-color: var(--brass);
+  box-shadow: 0 0 0 6px var(--brass-soft);
+}
+.commit--now .commit__title {
+  font-size: clamp(22px, 2.4vw, 28px);
+  letter-spacing: -0.02em;
+}
+.commit--now .commit__year {
+  color: var(--brass);
 }
 
 /* ---------- Contact ---------- */
@@ -739,19 +953,27 @@ a {
     grid-column: 2;
     align-self: center;
   }
-  .timeline__track {
-    left: 5px;
+  .graph {
+    --lane-study: 12px;
+    --lane-work: 42px;
+    --gutter-graph: 62px;
   }
-  .tl {
-    grid-template-columns: 1fr;
-    padding-left: 32px;
+  .commit {
+    grid-template-columns: var(--gutter-graph) minmax(0, 1fr);
+    padding-bottom: 36px;
   }
-  .tl::after {
-    left: 0;
-    top: 10px;
+  .commit__year {
+    grid-column: 2;
+    font-size: 15px;
   }
-  .tl__year {
-    margin-bottom: 4px;
+  .commit__main {
+    grid-column: 2;
+  }
+  .commit__dot {
+    top: 0.3em;
+  }
+  .commit__title {
+    font-size: 18px;
   }
   .frame__stage-label {
     display: none;
@@ -766,6 +988,7 @@ a {
   *::before,
   *::after {
     transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
   }
 }
 
@@ -1039,5 +1262,17 @@ a {
 @container (max-width: 520px) {
   .reel__kind {
     display: none;
+  }
+}
+
+@media (max-width: 400px) {
+  .nav__name {
+    font-size: 15px;
+  }
+  .nav__links {
+    gap: 14px;
+  }
+  .nav__links a {
+    font-size: 14px;
   }
 }
