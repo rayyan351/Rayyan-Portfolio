@@ -1003,11 +1003,55 @@ a {
   padding: clamp(110px, 16vh, 180px) 0 36px;
   border-top: 1px solid var(--line);
   overflow: hidden;
-  /* Faint ruled lines, like drafting film. */
+  isolation: isolate;
+  /* Faint ruled lines, like drafting film (the field canvas replaces these on mouse devices). */
   background:
-    radial-gradient(ellipse 70% 60% at 50% 30%, transparent 40%, var(--bg) 100%),
     repeating-linear-gradient(to bottom, transparent 0 7px, rgba(231, 228, 221, 0.035) 7px 8px),
     var(--bg);
+}
+.finale::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse 75% 65% at 50% 35%, transparent 45%, var(--bg) 100%);
+}
+@media (hover: hover) and (pointer: fine) {
+  .finale {
+    background: var(--bg);
+  }
+}
+.field {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+}
+.field__dot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 5;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #f4dcb4;
+  box-shadow: 0 0 0 3px rgba(214, 160, 92, 0.35), 0 0 22px 6px rgba(214, 160, 92, 0.65);
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+  transition: width 0.25s var(--ease), height 0.25s var(--ease), background 0.25s;
+}
+.field__dot.is-hot {
+  width: 30px;
+  height: 30px;
+  background: rgba(244, 220, 180, 0.25);
+  box-shadow: 0 0 0 1.5px rgba(244, 220, 180, 0.9), 0 0 26px 6px rgba(214, 160, 92, 0.5);
+}
+.finale.has-field-cursor,
+.finale.has-field-cursor * {
+  cursor: none;
 }
 .finale__inner {
   display: flex;
@@ -1019,7 +1063,6 @@ a {
   /* Breaks out of the content width so the name spans the screen. */
   width: min(calc(100vw - 2 * var(--gutter)), 1720px);
   margin-bottom: clamp(36px, 6vh, 64px);
-  cursor: crosshair;
   touch-action: pan-y;
 }
 .finale__name canvas {

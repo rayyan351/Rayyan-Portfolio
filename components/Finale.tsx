@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import { contact } from "./data";
+import FinaleField from "./FinaleField";
 
 /*
  * The footer name is drawn with hatching: the diagonal strokes a draftsman uses to fill a cut
@@ -15,6 +16,7 @@ const BRASS = [200, 164, 106];
 const INK = [231, 228, 221];
 
 export default function Finale() {
+  const section = useRef<HTMLElement>(null);
   const wrap = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const state = useRef({
@@ -218,7 +220,8 @@ export default function Finale() {
   };
 
   return (
-    <section id="contact" className="finale" aria-labelledby="contact-title">
+    <section id="contact" ref={section} className="finale" aria-labelledby="contact-title">
+      <FinaleField host={section} />
       <div className="wrap finale__inner">
         <h2 className="sr-only" id="contact-title">Contact Muhammad Rayyan</h2>
         <div className="finale__name" ref={wrap} onPointerMove={onMove} onPointerLeave={onLeave}>
