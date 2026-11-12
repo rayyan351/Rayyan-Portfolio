@@ -23,7 +23,7 @@ export const projects: Project[] = [
   {
     id: "boc",
     name: "Burger O'Clock",
-    kind: "Ordering platform and admin system, internship at Code Labs Ltd",
+    kind: "Ordering platform and admin system, internship at CodeLabs",
     year: "2026",
     stack: ["Next.js", "Node.js", "Express", "MongoDB", "Redux", "Ant Design"],
     live: "https://burger-o-clock-gamma.vercel.app",
@@ -36,7 +36,7 @@ export const projects: Project[] = [
       "A multi-branch burger chain needed online ordering for customers and one system for staff to run menus, stock and branches.",
       "A bold storefront built around their campaign banners and a sticky category rail, plus an admin panel organised by job: products, orders, inventory, branches and settings.",
       "Orders go to the nearest branch with an ETA from its live kitchen queue. Recipes draw down stock earliest-expiry first inside a database transaction, and roles limit each staff account to its own branch.",
-      "Shipped during my month at Code Labs Ltd. Admin edits refresh the cached storefront straight away, so the menu stays current and the site stays fast.",
+      "Shipped during my month at CodeLabs. Admin edits refresh the cached storefront straight away, so the menu stays current and the site stays fast.",
     ],
     wireframe: [
       [0, 0, 1440, 92],
@@ -254,7 +254,7 @@ export const timeline = [
   { year: "2023", title: "Aptech diploma and first real sites", body: "Learned PHP and JavaScript, then built and ran the WordPress sites for my college's science and technology society." },
   { year: "2024", title: "React, Express and Next.js", body: "Taught myself the modern stack, while working with international customers at IBEX Global." },
   { year: "2025", title: "BS in Artificial Intelligence", body: "Started at Bahria University Karachi. Built the Nexus Infinity Tech website on contract and completed a data analytics training program in SQL and PostgreSQL." },
-  { year: "2026", title: "Full-stack internship at Code Labs Ltd", body: "Rebuilt Burger O'Clock's ordering site and built its admin system in one month: branches, staff roles, inventory, recipes and purchasing. Now taking on remote and freelance projects." },
+  { year: "2026", title: "Full-stack internship at CodeLabs", body: "Rebuilt Burger O'Clock's ordering site and built its admin system in one month: branches, staff roles, inventory, recipes and purchasing. Now taking on remote and freelance projects." },
 ];
 
 export const contact = {
