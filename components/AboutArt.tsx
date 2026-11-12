@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Art } from "./data";
+import { openBuild } from "./Theater";
 
 /* Small hand-built visuals, one per chapter of the About scene. */
 
@@ -105,7 +106,7 @@ function Semester() {
   );
 }
 
-function Clip({ src, poster, on, href, label, external }: { src: string; poster: string; on: boolean; href: string; label: string; external?: boolean }) {
+function Clip({ src, poster, on, href, label, external, watch }: { src: string; poster: string; on: boolean; href?: string; label: string; external?: boolean; watch?: string }) {
   const v = useRef<HTMLVideoElement>(null);
   useEffect(() => {
     const el = v.current;
@@ -118,7 +119,11 @@ function Clip({ src, poster, on, href, label, external }: { src: string; poster:
   return (
     <div className="art art--clip">
       <video ref={v} poster={poster} muted loop playsInline preload="none" aria-hidden="true" tabIndex={-1} />
-      <a className="art__link" href={href} {...(external ? { target: "_blank", rel: "noreferrer" } : {})}>{label}</a>
+      {watch ? (
+        <button type="button" className="art__link art__link--btn" onClick={(e) => openBuild(watch, e.currentTarget.closest(".art"))}>{label}</button>
+      ) : (
+        <a className="art__link" href={href} {...(external ? { target: "_blank", rel: "noreferrer" } : {})}>{label}</a>
+      )}
     </div>
   );
 }
@@ -171,7 +176,7 @@ export default function AboutArt({ art, on }: { art: Art; on: boolean }) {
     case "nexus":
       return <Clip src="/reel/nexus.mp4" poster="/reel/nexus.webp" on={on} href="https://nexus-frontend-ashen-kappa.vercel.app" label="See the archived build" external />;
     case "boc":
-      return <Clip src="/reel/boc.mp4" poster="/reel/boc.webp" on={on} href="#build-boc" label="See how it's built" />;
+      return <Clip src="/reel/boc.mp4" poster="/reel/boc.webp" on={on} watch="boc" label="Watch the build" />;
     case "now": return <Now />;
   }
 }

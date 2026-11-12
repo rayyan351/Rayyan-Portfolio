@@ -262,17 +262,17 @@ export const reel: ReelItem[] = [
 
 
 export type Art = "first-html" | "grades" | "society" | "calls" | "semester" | "nexus" | "boc" | "now";
-export type Commit = { lane: "study" | "work" | "now"; year: string; title: string; short: string; body: string; art: Art };
+export type Commit = { lane: "study" | "work" | "now"; year: string; title: string; short: string; stop: string; body: string; art: Art };
 
 export const history: Commit[] = [
-  { lane: "study", year: "2022", title: "Learned HTML and CSS from YouTube", short: "First lines of code", art: "first-html", body: "My first project was a rebuild of the YouTube interface." },
-  { lane: "study", year: "2023", title: "Aptech diploma, with Distinction", short: "Aptech diploma", art: "grades", body: "PHP, Laravel, JavaScript and MySQL, with 96 out of 100 in practicals." },
-  { lane: "work", year: "2023", title: "Websites for my college's science society", short: "Society websites", art: "society", body: "Designed and ran the society's WordPress sites at Sceptre College, and was on the IT team for Sceptre Sonic II." },
-  { lane: "work", year: "2024", title: "Customer service at ibex", short: "ibex", art: "calls", body: "Daily calls with US customers, first for DM Clinical Research and then for Walmart." },
-  { lane: "study", year: "2025", title: "BS Artificial Intelligence, Bahria University", short: "Bahria University", art: "semester", body: "Alongside it, a data analytics program in SQL and PostgreSQL, and the design team for Teknofest Pre-Event '25." },
-  { lane: "work", year: "2025", title: "Nexus Infinity Tech website, on contract", short: "Nexus Infinity Tech", art: "nexus", body: "Designed and built a London company's site with React, GSAP and Three.js." },
-  { lane: "work", year: "2026", title: "Software development intern at CodeLabs", short: "CodeLabs internship", art: "boc", body: "Built Burger O'Clock's ordering platform and admin system in a month." },
-  { lane: "now", year: "Now", title: "Studying AI and building for clients", short: "Now", art: "now", body: "Open to remote and freelance work in the evenings, Pakistan time, which overlaps with US mornings." },
+  { lane: "study", year: "2022", title: "Learned HTML and CSS from YouTube", short: "First lines of code", stop: "First code", art: "first-html", body: "My first project was a rebuild of the YouTube interface." },
+  { lane: "study", year: "2023", title: "Aptech diploma, with Distinction", short: "Aptech diploma", stop: "Aptech", art: "grades", body: "PHP, Laravel, JavaScript and MySQL, with 96 out of 100 in practicals." },
+  { lane: "work", year: "2023", title: "Websites for my college's science society", short: "Society websites", stop: "Sceptre College", art: "society", body: "Designed and ran the society's WordPress sites at Sceptre College, and was on the IT team for Sceptre Sonic II." },
+  { lane: "work", year: "2024", title: "Customer service at ibex", short: "ibex", stop: "ibex", art: "calls", body: "Daily calls with US customers, first for DM Clinical Research and then for Walmart." },
+  { lane: "study", year: "2025", title: "BS Artificial Intelligence, Bahria University", short: "Bahria University", stop: "Bahria University", art: "semester", body: "Alongside it, a data analytics program in SQL and PostgreSQL, and the design team for Teknofest Pre-Event '25." },
+  { lane: "work", year: "2025", title: "Nexus Infinity Tech website, on contract", short: "Nexus Infinity Tech", stop: "Nexus", art: "nexus", body: "Designed and built a London company's site with React, GSAP and Three.js." },
+  { lane: "work", year: "2026", title: "Software development intern at CodeLabs", short: "CodeLabs internship", stop: "CodeLabs", art: "boc", body: "Built Burger O'Clock's ordering platform and admin system in a month." },
+  { lane: "now", year: "Now", title: "Studying AI and building for clients", short: "Now", stop: "Now", art: "now", body: "Open to remote and freelance work in the evenings, Pakistan time, which overlaps with US mornings." },
 ];
 
 export const contact = {
