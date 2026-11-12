@@ -4,7 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { reel } from "./data";
+import { reel, projects } from "./data";
+import { openBuild } from "./Theater";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -159,7 +160,26 @@ export default function Reel() {
 
   const setHover = (h: boolean) => { hovering.current = h; syncRef.current(); };
 
+  const featured = projects.some((x) => x.id === item.id);
   const external = !item.href.startsWith("#");
+  const frameRef = useRef<HTMLDivElement>(null);
+  const watch = () => openBuild(item.id, frameRef.current);
+
+  // Hold the reel still while the build window is open, then pick up where it was.
+  const wasPaused = useRef(false);
+  useEffect(() => {
+    const on = (e: Event) => {
+      const open = (e as CustomEvent).detail as boolean;
+      if (open) {
+        setPaused((cur) => {
+          wasPaused.current = cur;
+          return true;
+        });
+      } else setPaused(wasPaused.current);
+    };
+    window.addEventListener("theater", on);
+    return () => window.removeEventListener("theater", on);
+  }, []);
 
   return (
     <section
@@ -204,7 +224,8 @@ export default function Reel() {
         </div>
 
         <div
-          className="reel__frame"
+          ref={frameRef}
+          className={`reel__frame${featured ? " is-featured" : ""}`}
           onMouseEnter={() => setHover(true)}
           onMouseLeave={() => setHover(false)}
           onPointerDown={onPointerDown}
@@ -226,6 +247,13 @@ export default function Reel() {
               style={i === 0 ? undefined : { opacity: 0, visibility: "hidden" }}
             />
           ))}
+
+          {featured && (
+            <button type="button" className="reel__watch" onClick={watch} tabIndex={-1} aria-hidden="true">
+              <span className="reel__watch-icon"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor" /></svg></span>
+              Watch the build
+            </button>
+          )}
 
           <div className="reel__label" aria-live={autoplay && !paused ? "off" : "polite"}>
             <span className="reel__name">{item.name}</span>
@@ -262,9 +290,15 @@ export default function Reel() {
               </button>
             ))}
           </div>
-          <a className="textlink reel__action" href={item.href} {...(external ? { target: "_blank", rel: "noreferrer" } : {})}>
-            {item.action}
-          </a>
+          {featured ? (
+            <button type="button" className="textlink reel__action reel__action--btn" onClick={watch}>
+              Watch the build
+            </button>
+          ) : (
+            <a className="textlink reel__action" href={item.href} {...(external ? { target: "_blank", rel: "noreferrer" } : {})}>
+              {item.action}
+            </a>
+          )}
         </div>
       </div>
     </section>
