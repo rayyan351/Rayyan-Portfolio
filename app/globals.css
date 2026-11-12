@@ -108,9 +108,7 @@ a {
   border-bottom: 1px solid transparent;
 }
 .nav.is-scrolled {
-  background: rgba(22, 24, 27, 0.82);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(22, 24, 27, 0.94);
   border-bottom-color: var(--line);
 }
 .nav__inner {
@@ -774,8 +772,6 @@ a {
 /* ---------- Reel ---------- */
 
 .reel {
-  --drift: 0;
-  --s: 1;
   position: relative;
   min-height: 100svh;
   display: flex;
@@ -790,78 +786,61 @@ a {
   inset: 0;
   z-index: -1;
   pointer-events: none;
+  overflow: hidden;
 }
-.reel__stage {
+.reel__zoom,
+.reel__depth {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 1600px;
-  height: 1000px;
-  margin: -500px 0 0 -800px;
-  perspective: 620px;
-  transform: scale(var(--s));
+  inset: 0;
+  will-change: transform;
 }
-.reel__world {
+.reel__bg {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 0;
-  height: 0;
-  transform-style: preserve-3d;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform, opacity;
 }
-.reel__wall {
+.reel__halo {
   position: absolute;
-  backface-visibility: visible;
-  background-color: var(--bg);
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.4s var(--ease);
+  background:
+    radial-gradient(ellipse 34% 22% at 50% 14%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
+    radial-gradient(ellipse 48% 48% at 50% 52%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 72%);
 }
-/* Side walls: 7000px deep, texture period 580px along the depth axis. */
-.reel__wall--left,
-.reel__wall--right {
-  width: 7000px;
-  height: 1000px;
-  left: -3500px;
-  top: -500px;
-  background-size: 580px 950px;
-  background-repeat: repeat-x;
-}
-.reel__wall--left {
-  background-image: url("/reel/wall-left.webp");
-  background-position: calc(var(--drift) * -580px) 50%;
-  transform: translateX(-800px) translateZ(-3500px) rotateY(90deg);
-}
-.reel__wall--right {
-  background-image: url("/reel/wall-right.webp");
-  background-position: calc(var(--drift) * 580px) 50%;
-  transform: translateX(800px) translateZ(-3500px) rotateY(-90deg);
-}
-/* Ceiling and floor: texture period 570px along the depth axis. */
-.reel__wall--top,
-.reel__wall--bottom {
-  width: 1600px;
-  height: 7000px;
-  left: -800px;
-  top: -3500px;
-  background-size: 1740px 570px;
-  background-repeat: repeat-y;
-}
-.reel__wall--top {
-  background-image: url("/reel/wall-top.webp");
-  background-position: 50% calc(var(--drift) * -570px);
-  transform: translateY(-500px) translateZ(-3500px) rotateX(-90deg);
-}
-.reel__wall--bottom {
-  background-image: url("/reel/wall-bottom.webp");
-  background-position: 50% calc(var(--drift) * 570px);
-  transform: translateY(500px) translateZ(-3500px) rotateX(90deg);
+.reel__halo.is-on {
+  opacity: 1;
 }
 .reel__fog {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 36% 20% at 50% 16%, rgba(200, 164, 106, 0.22), transparent 70%),
-    radial-gradient(ellipse 46% 46% at 50% 52%, rgba(200, 164, 106, 0.14), transparent 72%),
-    radial-gradient(ellipse 42% 42% at 50% 50%, var(--bg) 0%, rgba(22, 24, 27, 0.92) 38%, rgba(22, 24, 27, 0.5) 72%, rgba(22, 24, 27, 0.72) 100%),
-    linear-gradient(to bottom, var(--bg) 0%, transparent 14%, transparent 86%, var(--bg) 100%);
+    radial-gradient(ellipse 42% 42% at 50% 50%, rgba(22, 24, 27, 0.85) 0%, rgba(22, 24, 27, 0.7) 38%, rgba(22, 24, 27, 0.42) 72%, rgba(22, 24, 27, 0.66) 100%),
+    linear-gradient(to bottom, var(--bg) 0%, transparent 16%, transparent 84%, var(--bg) 100%);
+}
+
+/* ---------- Scene tint ---------- */
+
+.tint {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.tint__layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.2s var(--ease);
+  background:
+    radial-gradient(ellipse 55% 60% at 78% 45%, color-mix(in srgb, var(--accent) 13%, transparent), transparent 70%),
+    radial-gradient(ellipse 40% 50% at 12% 90%, color-mix(in srgb, var(--accent) 7%, transparent), transparent 70%);
+}
+.tint__layer.is-on {
+  opacity: 1;
 }
 
 .reel__ui {
@@ -894,8 +873,10 @@ a {
 
 .reel__frame {
   position: relative;
-  width: min(960px, 64vw, 100%, calc((100svh - 300px) * 1.6));
+  width: min(960px, 64vw, 100%, calc((100svh - 240px) * 1.6));
   aspect-ratio: 1440 / 900;
+  container-type: inline-size;
+  will-change: transform;
   border-radius: 18px;
   overflow: hidden;
   background: var(--surface);
@@ -930,13 +911,13 @@ a {
 }
 .reel__label {
   position: absolute;
-  left: clamp(14px, 2vw, 24px);
-  bottom: clamp(14px, 2vw, 24px);
+  left: clamp(10px, 2.4cqw, 24px);
+  bottom: clamp(10px, 2.4cqw, 24px);
   z-index: 1;
   display: flex;
   align-items: baseline;
-  gap: 12px;
-  padding: 11px 20px 12px;
+  gap: clamp(8px, 1.2cqw, 12px);
+  padding: clamp(7px, 1.1cqw, 11px) clamp(13px, 2cqw, 20px) clamp(8px, 1.2cqw, 12px);
   border-radius: 999px;
   background: rgba(231, 228, 221, 0.94);
   color: #16181b;
@@ -944,24 +925,24 @@ a {
 }
 .reel__name {
   font-weight: 700;
-  font-size: clamp(16px, 1.5vw, 21px);
+  font-size: clamp(14px, 2.1cqw, 21px);
   letter-spacing: -0.015em;
   white-space: nowrap;
 }
 .reel__kind {
   color: #5d6066;
-  font-size: clamp(13px, 1.1vw, 16px);
+  font-size: clamp(12px, 1.6cqw, 16px);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .reel__pause {
   position: absolute;
-  right: clamp(14px, 2vw, 24px);
-  bottom: clamp(14px, 2vw, 24px);
+  right: clamp(10px, 2.4cqw, 24px);
+  bottom: clamp(10px, 2.4cqw, 24px);
   z-index: 1;
-  width: 48px;
-  height: 48px;
+  width: clamp(36px, 5cqw, 48px);
+  height: clamp(36px, 5cqw, 48px);
   border-radius: 50%;
   border: 0;
   display: grid;
@@ -977,7 +958,7 @@ a {
 }
 
 .reel__foot {
-  width: min(960px, 64vw, 100%, calc((100svh - 300px) * 1.6));
+  width: min(960px, 64vw, 100%, calc((100svh - 240px) * 1.6));
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
@@ -1053,8 +1034,10 @@ a {
   .reel__kind {
     display: none;
   }
-  .reel__pause {
-    width: 40px;
-    height: 40px;
+}
+
+@container (max-width: 520px) {
+  .reel__kind {
+    display: none;
   }
 }

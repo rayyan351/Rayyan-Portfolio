@@ -3,6 +3,7 @@ import Hero from "../components/Hero";
 import Build from "../components/Build";
 import Timeline from "../components/Timeline";
 import Reel from "../components/Reel";
+import SceneTint from "../components/SceneTint";
 import SmoothScroll from "../components/SmoothScroll";
 import { projects, moreWork, contact } from "../components/data";
 
@@ -11,6 +12,7 @@ export default function Home() {
     <>
       <a className="skip" href="#work">Skip to work</a>
       <SmoothScroll />
+      <SceneTint />
       <Nav />
 
       <main>
@@ -22,7 +24,7 @@ export default function Home() {
           <div className="wrap section__head">
             <h2 className="section__title" id="builds-title">How they were built</h2>
             <p className="section__intro">
-              Three of these, taken apart the way I work: the brief, the design, the code structure,
+              Four of these, taken apart the way I work: the brief, the design, the code structure,
               and the site that went live. Scroll through each one.
             </p>
           </div>

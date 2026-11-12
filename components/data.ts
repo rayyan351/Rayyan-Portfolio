@@ -14,13 +14,58 @@ export type Project = {
   shotAlt: string;
   mobileShot: string;
   steps: [string, string, string, string]; // idea, design, code, ship
+  accent: string;
   wireframe: Rect[];
   tree: TreeLine[];
 };
 
 export const projects: Project[] = [
   {
+    id: "boc",
+    name: "Burger O'Clock",
+    kind: "Ordering platform and admin system, internship at Code Labs Ltd",
+    year: "2026",
+    stack: ["Next.js", "Node.js", "Express", "MongoDB", "Redux", "Ant Design"],
+    live: "https://burger-o-clock-gamma.vercel.app",
+    code: "https://github.com/rayyan351/Intership_BOC",
+    shot: "/work/boc-desktop-hero.webp",
+    shotAlt: "Burger O'Clock storefront with a Share Box campaign banner, category rail and menu search",
+    mobileShot: "/work/boc-desktop-hero.webp",
+    accent: "#f2b705",
+    steps: [
+      "A multi-branch burger chain needed online ordering for customers and one system for staff to run menus, stock and branches.",
+      "A bold storefront built around their campaign banners and a sticky category rail, plus an admin panel organised by job: products, orders, inventory, branches and settings.",
+      "Orders go to the nearest branch with an ETA from its live kitchen queue. Recipes draw down stock earliest-expiry first inside a database transaction, and roles limit each staff account to its own branch.",
+      "Shipped during my month at Code Labs Ltd. Admin edits refresh the cached storefront straight away, so the menu stays current and the site stays fast.",
+    ],
+    wireframe: [
+      [0, 0, 1440, 92],
+      [110, 18, 95, 52],
+      [215, 24, 140, 40],
+      [330, 24, 130, 40],
+      [1170, 20, 60, 50],
+      [28, 100, 1384, 605],
+      [130, 735, 1140, 42],
+      [470, 825, 500, 58],
+    ],
+    tree: [
+      { depth: 0, name: "front-end/src/app", dir: true },
+      { depth: 1, name: "(site)", dir: true, note: "storefront" },
+      { depth: 1, name: "admin/(dashboard)", dir: true },
+      { depth: 2, name: "inventory/", dir: true, note: "stock, POs" },
+      { depth: 2, name: "branchoperations/", dir: true, note: "staff, roles" },
+      { depth: 2, name: "orders/", dir: true },
+      { depth: 0, name: "back-end", dir: true },
+      { depth: 1, name: "middleware", dir: true },
+      { depth: 2, name: "rbacMiddleware.js", note: "roles + permissions" },
+      { depth: 2, name: "branchScopeMiddleware.js" },
+      { depth: 1, name: "services/inventoryDepletionService.js" },
+      { depth: 1, name: "utils/branchRoutingEngine.js", note: "nearest branch + ETA" },
+    ],
+  },
+  {
     id: "cypress",
+    accent: "#1fa192",
     name: "Cypress Grill",
     kind: "Restaurant website",
     year: "2025",
@@ -64,6 +109,7 @@ export const projects: Project[] = [
   },
   {
     id: "luxscents",
+    accent: "#c9a45c",
     name: "LuxScents",
     kind: "Full-stack perfume store",
     year: "2025",
@@ -107,6 +153,7 @@ export const projects: Project[] = [
   },
   {
     id: "functions",
+    accent: "#5b5bd6",
     name: "Functions Global",
     kind: "Agency homepage, Figma to React",
     year: "2025",
@@ -187,26 +234,27 @@ export type ReelItem = {
   /** In-page build section for featured projects, otherwise the live site. */
   href: string;
   action: string;
+  accent: string;
 };
 
 export const reel: ReelItem[] = [
-  { id: "luxscents", name: "LuxScents", kind: "Full-stack perfume store", video: "/reel/luxscents.mp4", poster: "/reel/luxscents.webp", href: "#build-luxscents", action: "See how it's built" },
-  { id: "cypress", name: "Cypress Grill", kind: "Restaurant website", video: "/reel/cypress.mp4", poster: "/reel/cypress.webp", href: "#build-cypress", action: "See how it's built" },
-  { id: "beast", name: "BEAST", kind: "Cinematic landing page", video: "/reel/beast.mp4", poster: "/reel/beast.webp", href: "https://cinematiclandingpage.vercel.app", action: "Visit the site" },
-  { id: "functions", name: "Functions Global", kind: "Agency homepage", video: "/reel/functions.mp4", poster: "/reel/functions.webp", href: "#build-functions", action: "See how it's built" },
-  { id: "salon", name: "Salon Luxe", kind: "Booking-focused salon site", video: "/reel/salon.mp4", poster: "/reel/salon.webp", href: "https://hair-salon-weld-three.vercel.app", action: "Visit the site" },
-  { id: "mew", name: "Modern Engineering Works", kind: "Engineering firm website", video: "/reel/mew.mp4", poster: "/reel/mew.webp", href: "https://modern-engineering-works.vercel.app", action: "Visit the site" },
-  { id: "nexus", name: "Nexus Infinity Tech", kind: "Company website, on contract", video: "/reel/nexus.mp4", poster: "/reel/nexus.webp", href: "https://nexusinftech.it.com", action: "Visit the site" },
+  { id: "boc", name: "Burger O'Clock", kind: "Ordering platform and admin system", video: "/reel/boc.mp4", poster: "/reel/boc.webp", href: "#build-boc", action: "See how it's built", accent: "#f2b705" },
+  { id: "luxscents", name: "LuxScents", kind: "Full-stack perfume store", video: "/reel/luxscents.mp4", poster: "/reel/luxscents.webp", href: "#build-luxscents", action: "See how it's built", accent: "#c9a45c" },
+  { id: "cypress", name: "Cypress Grill", kind: "Restaurant website", video: "/reel/cypress.mp4", poster: "/reel/cypress.webp", href: "#build-cypress", action: "See how it's built", accent: "#1fa192" },
+  { id: "beast", name: "BEAST", kind: "Cinematic landing page", video: "/reel/beast.mp4", poster: "/reel/beast.webp", href: "https://cinematiclandingpage.vercel.app", action: "Visit the site", accent: "#d9542b" },
+  { id: "functions", name: "Functions Global", kind: "Agency homepage", video: "/reel/functions.mp4", poster: "/reel/functions.webp", href: "#build-functions", action: "See how it's built", accent: "#5b5bd6" },
+  { id: "salon", name: "Salon Luxe", kind: "Booking-focused salon site", video: "/reel/salon.mp4", poster: "/reel/salon.webp", href: "https://hair-salon-weld-three.vercel.app", action: "Visit the site", accent: "#c98a7a" },
+  { id: "mew", name: "Modern Engineering Works", kind: "Engineering firm website", video: "/reel/mew.mp4", poster: "/reel/mew.webp", href: "https://modern-engineering-works.vercel.app", action: "Visit the site", accent: "#2f80d1" },
+  { id: "nexus", name: "Nexus Infinity Tech", kind: "Company website, on contract", video: "/reel/nexus.mp4", poster: "/reel/nexus.webp", href: "https://nexusinftech.it.com", action: "Visit the site", accent: "#8b5cf6" },
 ];
 
-export const reelTiles = reel.flatMap((r) => [`/reel/tile-${r.id}-0.webp`, `/reel/tile-${r.id}-1.webp`]);
 
 export const timeline = [
   { year: "2022", title: "Started with HTML and CSS", body: "Learned from YouTube and rebuilt the YouTube interface as my first project." },
   { year: "2023", title: "Aptech diploma and first real sites", body: "Learned PHP and JavaScript, then built and ran the WordPress sites for my college's science and technology society." },
   { year: "2024", title: "React, Express and Next.js", body: "Taught myself the modern stack, while working with international customers at IBEX Global." },
   { year: "2025", title: "BS in Artificial Intelligence", body: "Started at Bahria University Karachi. Built the Nexus Infinity Tech website on contract and completed a data analytics training program in SQL and PostgreSQL." },
-  { year: "2026", title: "Client and full-stack work", body: "Restaurant, agency and e-commerce builds, and now taking on remote and freelance projects." },
+  { year: "2026", title: "Full-stack internship at Code Labs Ltd", body: "Rebuilt Burger O'Clock's ordering site and built its admin system in one month: branches, staff roles, inventory, recipes and purchasing. Now taking on remote and freelance projects." },
 ];
 
 export const contact = {

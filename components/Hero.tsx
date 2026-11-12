@@ -2,9 +2,10 @@
 
 import { useRef } from "react";
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 
-gsap.registerPlugin(useGSAP);
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 // Type is set on a drafting grid: cap height and baseline guides for each line.
 const LINES = [
@@ -44,6 +45,15 @@ export default function Hero() {
             .to(".hero__glyphs", { strokeOpacity: 0, duration: 0.8 }, "<0.3")
             .to(".hero__guide", { opacity: 0.12, duration: 1 }, "<")
             .from(".hero__reveal", { y: 18, autoAlpha: 0, duration: 0.9, stagger: 0.1 }, "-=1.1");
+        });
+
+        // As the reel rises, the name recedes, as if the camera is moving past it into the tunnel.
+        gsap.to(root.current, {
+          yPercent: -14,
+          scale: 0.96,
+          autoAlpha: 0.15,
+          ease: "none",
+          scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: 0.4 },
         });
 
         return () => tl?.kill();
