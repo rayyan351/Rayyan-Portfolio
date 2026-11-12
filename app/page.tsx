@@ -2,10 +2,11 @@ import Nav from "../components/Nav";
 import Hero from "../components/Hero";
 import Build from "../components/Build";
 import About from "../components/About";
+import Finale from "../components/Finale";
 import Reel from "../components/Reel";
 import SceneTint from "../components/SceneTint";
 import SmoothScroll from "../components/SmoothScroll";
-import { projects, moreWork, contact } from "../components/data";
+import { projects, moreWork } from "../components/data";
 
 export default function Home() {
   return (
@@ -56,27 +57,7 @@ export default function Home() {
 
         <About />
 
-        <section id="contact" className="contact" aria-labelledby="contact-title">
-          <div className="wrap">
-            <h2 className="contact__q" id="contact-title">
-              Have a website to build, or a role I could fill? Email me and I&apos;ll reply within a day.
-            </h2>
-            <a className="contact__email" href={`mailto:${contact.email}`}>{contact.email}</a>
-            <div className="contact__row">
-              <p style={{ margin: 0 }}>
-                Available evenings Pakistan time, which overlaps with US mornings.
-              </p>
-              <div className="contact__links">
-                <a className="textlink textlink--muted" href={contact.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
-                <a className="textlink textlink--muted" href={contact.github} target="_blank" rel="noreferrer">GitHub</a>
-              </div>
-            </div>
-            <footer className="footer">
-              <span>Designed and built by Muhammad Rayyan</span>
-              <span>Next.js and GSAP, 2026</span>
-            </footer>
-          </div>
-        </section>
+        <Finale />
       </main>
     </>
   );
