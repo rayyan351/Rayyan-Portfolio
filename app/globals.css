@@ -2231,7 +2231,7 @@ html.theater-open body {
   padding: 14px var(--gutter);
 }
 .th__shell {
-  width: min(1180px, 100%, calc((100svh - 330px) * 1.6));
+  width: min(1180px, 100%, calc((100svh - 362px) * 1.6));
   will-change: transform;
 }
 .th__frame {
@@ -2688,6 +2688,45 @@ button.more__row {
   grid-area: 1 / 1;
 }
 .th .url-b {
+  visibility: hidden;
+  opacity: 0;
+}
+
+/* Several code files: editor tabs, one pane at a time */
+.code__tabs {
+  display: flex;
+  gap: 2px;
+  margin: -10px 0 6px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font);
+  font-size: 12px;
+  overflow: hidden;
+}
+.code__tab {
+  padding: 9px 10px 8px;
+  color: var(--muted);
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.3s, border-color 0.3s;
+}
+.code[data-tab="0"] .code__tab[data-i="0"],
+.code[data-tab="1"] .code__tab[data-i="1"],
+.code[data-tab="2"] .code__tab[data-i="2"],
+.code[data-tab="3"] .code__tab[data-i="3"] {
+  color: var(--text);
+  border-bottom-color: var(--accent, var(--brass));
+}
+.code__panes {
+  display: grid;
+}
+.code__pane {
+  grid-area: 1 / 1;
+  margin: 0;
+  font: inherit;
+}
+.code__pane + .code__pane {
   visibility: hidden;
   opacity: 0;
 }

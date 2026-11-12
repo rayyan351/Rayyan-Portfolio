@@ -18,7 +18,7 @@ export type Project = {
   accent: string;
   video?: string;
   admin?: { video: string; poster: string };
-  excerpt?: { file: string; lines: string[] };
+  excerpt?: { file: string; lines: string[] } | { file: string; lines: string[] }[];
   wireframe: Rect[];
   tree: TreeLine[];
 };
@@ -28,11 +28,21 @@ export const projects: Project[] = [
     id: "boc",
     video: "/reel/boc.mp4",
     admin: { video: "/reel/boc-admin.mp4", poster: "/reel/boc-admin.webp" },
-    excerpt: { file: "back-end/utils/branchRoutingEngine.js", lines: ["const activeQueueCount = await Order.countDocuments({", "  branch: selectedBranch._id,", "  orderStatus: { $in: ['PENDING', 'PREPARING'] },", "});", "", "const prepTime = 15;", "const travelTime = Math.ceil(distKm * 2.5);", "const queueBuffer = Math.min(Math.floor(activeQueueCount / 2) * 3, 25);", "calculatedETA = prepTime + travelTime + queueBuffer;"] },
+    excerpt: [
+      {
+        file: "front-end/src/redux/store.js",
+        lines: ["export const store = configureStore({", "  reducer: {", "    cart: cartReducer,", "    location: locationReducer,", "    notifications: notificationReducer,", "    [authApi.reducerPath]: authApi.reducer,", "    [productApi.reducerPath]: productApi.reducer,", "    [categoryApi.reducerPath]: categoryApi.reducer,", "    [dealApi.reducerPath]: dealApi.reducer,", "    [sectionApi.reducerPath]: sectionApi.reducer,"],
+      },
+      {
+        file: "back-end/utils/revalidate.js",
+        lines: ["const storefrontUrl = (process.env.FRONTEND_URL || 'http://localhost:3000').split(',')[0].trim();", "const response = await fetch(`${storefrontUrl}/api/revalidate`, {", "  method: 'POST',", "  headers: { 'Content-Type': 'application/json' },", "  body: JSON.stringify({", "    path: '/',", "    secret: process.env.REVALIDATION_SECRET,", "  }),", "});"],
+      },
+      { file: "back-end/utils/branchRoutingEngine.js", lines: ["const activeQueueCount = await Order.countDocuments({", "  branch: selectedBranch._id,", "  orderStatus: { $in: ['PENDING', 'PREPARING'] },", "});", "", "const prepTime = 15;", "const travelTime = Math.ceil(distKm * 2.5);", "const queueBuffer = Math.min(Math.floor(activeQueueCount / 2) * 3, 25);", "calculatedETA = prepTime + travelTime + queueBuffer;"] },
+    ],
     name: "Burger O'Clock",
     kind: "Ordering platform and admin system, internship at CodeLabs",
     year: "2026",
-    stack: ["Next.js", "Node.js", "Express", "MongoDB", "Redux", "Ant Design"],
+    stack: ["Next.js with ISR", "Redux Toolkit Query", "Node.js", "Express", "MongoDB transactions"],
     live: "https://burger-o-clock-gamma.vercel.app",
     code: "https://github.com/rayyan351/Intership_BOC",
     shot: "/work/boc-desktop-hero.webp",
@@ -42,8 +52,8 @@ export const projects: Project[] = [
     steps: [
       "A multi-branch burger chain needed online ordering for customers and one system for staff to run menus, stock and branches.",
       "A bold storefront built around their campaign banners and a sticky category rail, plus an admin panel organised by job: products, orders, inventory, branches and settings.",
-      "Orders go to the nearest branch with an ETA from its live kitchen queue. Recipes draw down stock earliest-expiry first inside a database transaction, and roles limit each staff account to its own branch.",
-      "Shipped during my month at CodeLabs. Admin edits refresh the cached storefront straight away, so the menu stays current and the site stays fast.",
+      "One Redux store with 17 RTK Query slices handles every request. The storefront is static, rebuilt with ISR the moment an admin edits the menu, and orders and stock are saved in MongoDB transactions.",
+      "Shipped in a month at CodeLabs. Orders go to the nearest branch with an ETA from its live kitchen queue, stock is used earliest-expiry first, and each staff account is limited to its own role and branch.",
     ],
     wireframe: [
       [0, 0, 1440, 92],
@@ -56,18 +66,17 @@ export const projects: Project[] = [
       [470, 825, 500, 58],
     ],
     tree: [
-      { depth: 0, name: "front-end/src/app", dir: true },
-      { depth: 1, name: "(site)", dir: true, note: "storefront" },
-      { depth: 1, name: "admin/(dashboard)", dir: true },
-      { depth: 2, name: "inventory/", dir: true, note: "stock, POs" },
-      { depth: 2, name: "branchoperations/", dir: true, note: "staff, roles" },
-      { depth: 2, name: "orders/", dir: true },
+      { depth: 0, name: "front-end/src", dir: true },
+      { depth: 1, name: "app/(site)", dir: true, note: "storefront, ISR" },
+      { depth: 1, name: "app/api/revalidate", dir: true, note: "on-demand ISR" },
+      { depth: 1, name: "app/admin/(dashboard)", dir: true },
+      { depth: 1, name: "redux/store.js", note: "one store" },
+      { depth: 1, name: "services/", dir: true, note: "17 RTK Query slices" },
       { depth: 0, name: "back-end", dir: true },
-      { depth: 1, name: "middleware", dir: true },
-      { depth: 2, name: "rbacMiddleware.js", note: "roles + permissions" },
-      { depth: 2, name: "branchScopeMiddleware.js" },
-      { depth: 1, name: "services/inventoryDepletionService.js" },
-      { depth: 1, name: "utils/branchRoutingEngine.js", note: "nearest branch + ETA" },
+      { depth: 1, name: "middleware/rbacMiddleware.js", note: "roles + permissions" },
+      { depth: 1, name: "services/inventoryDepletionService.js", note: "FIFO" },
+      { depth: 1, name: "utils/branchRoutingEngine.js", note: "nearest branch" },
+      { depth: 1, name: "utils/revalidate.js" },
     ],
   },
   {

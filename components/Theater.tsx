@@ -20,6 +20,12 @@ export function openBuild(id: string, origin?: Element | null) {
   window.dispatchEvent(new CustomEvent("watch-build", { detail: { id, origin } }));
 }
 
+type Excerpt = { file: string; lines: string[] };
+const filesOf = (p: Project): Excerpt[] => (p.excerpt ? (Array.isArray(p.excerpt) ? p.excerpt : [p.excerpt]) : []);
+const PER = 3.4; // seconds each extra code file stays on screen
+// "back-end/utils/revalidate.js" -> "utils/revalidate.js"
+const short = (f: string) => f.split("/").slice(-2).join("/");
+
 function jitter(seed: number) {
   const x = Math.sin(seed * 9301 + 49297) * 233280;
   return x - Math.floor(x) - 0.5;
@@ -94,8 +100,11 @@ export default function Theater() {
     const frame = q(".th__frame")[0];
     const video = q(".ship-video")[0] as HTMLVideoElement | undefined;
     const admin = q(".admin-video")[0] as HTMLVideoElement | undefined;
+    // Projects with several code files get a longer Code chapter, one file at a time.
+    const files = filesOf(p);
+    const at = [AT[0], AT[1], AT[2], AT[3] + Math.max(0, files.length - 1) * PER];
     // With an admin clip the Ship chapter runs longer: the storefront first, then the admin panel.
-    const end = admin ? AT[3] + 16 : END;
+    const end = admin ? at[3] + 16 : END + (at[3] - AT[3]);
     const fills = q(".th__chapter-fill") as HTMLElement[];
     const crisp = Array.from(el.querySelectorAll<SVGRectElement>(".wire__crisp rect"));
     crisp.forEach((r) => {
@@ -108,25 +117,25 @@ export default function Theater() {
       paused: true,
       onUpdate: () => {
         const time = t.time();
-        const s = time < AT[1] ? 0 : time < AT[2] ? 1 : time < AT[3] ? 2 : 3;
+        const s = time < at[1] ? 0 : time < at[2] ? 1 : time < at[3] ? 2 : 3;
         if (s !== last) {
           last = s;
           setStep(s);
         }
         fills.forEach((f, i) => {
-          const stop = i < 3 ? AT[i + 1] : end;
-          const k = Math.max(0, Math.min(1, (time - AT[i]) / (stop - AT[i])));
+          const stop = i < 3 ? at[i + 1] : end;
+          const k = Math.max(0, Math.min(1, (time - at[i]) / (stop - at[i])));
           f.style.transform = `scaleX(${k})`;
         });
       },
       onComplete: () => setDone(true),
     });
 
-    t.addLabel("Idea", AT[0]).addLabel("Design", AT[1]).addLabel("Code", AT[2]).addLabel("Ship", AT[3]);
+    t.addLabel("Idea", at[0]).addLabel("Design", at[1]).addLabel("Code", at[2]).addLabel("Ship", at[3]);
 
     // A slow camera move across the whole film.
     t.fromTo(frame, { rotateX: 12, rotateY: -10, scale: 0.92, transformPerspective: 1800, transformOrigin: "50% 60%" },
-      { rotateX: 0, rotateY: 0, scale: 1, duration: AT[3] + 0.6, ease: "power1.inOut" }, 0)
+      { rotateX: 0, rotateY: 0, scale: 1, duration: at[3] + 0.6, ease: "power1.inOut" }, 0)
       // Idea: the brief is written out word by word, then a rough sketch appears behind it
       .fromTo(q(".brief__label"), { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" }, 0.15)
       .fromTo(q(".brief__w"), { autoAlpha: 0.06, y: 6 }, { autoAlpha: 1, y: 0, stagger: 0.045, duration: 0.35, ease: "power2.out" }, 0.3)
@@ -134,37 +143,45 @@ export default function Theater() {
       .to(q(".brief"), { autoAlpha: 0.14, scale: 0.97, duration: 0.8, ease: "power2.inOut" }, 2.0)
       .fromTo(q(".wire__sketch rect"), { autoAlpha: 0, scale: 0.96, transformOrigin: "50% 50%" }, { autoAlpha: 1, scale: 1, stagger: 0.09, duration: 0.45, ease: "power2.out" }, 2.1)
       // Design: precise lines take over
-      .to(q(".brief"), { autoAlpha: 0, duration: 0.4 }, AT[1])
-      .to(q(".wire__sketch"), { autoAlpha: 0, duration: 0.6 }, AT[1])
-      .to(crisp, { strokeDashoffset: 0, stagger: 0.12, duration: 0.9, ease: "power2.inOut" }, AT[1] + 0.1)
-      .to(crisp, { fillOpacity: 1, duration: 0.6 }, AT[1] + 1.6)
-      .fromTo(q(".wire__dim"), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, AT[1] + 1.6)
+      .to(q(".brief"), { autoAlpha: 0, duration: 0.4 }, at[1])
+      .to(q(".wire__sketch"), { autoAlpha: 0, duration: 0.6 }, at[1])
+      .to(crisp, { strokeDashoffset: 0, stagger: 0.12, duration: 0.9, ease: "power2.inOut" }, at[1] + 0.1)
+      .to(crisp, { fillOpacity: 1, duration: 0.6 }, at[1] + 1.6)
+      .fromTo(q(".wire__dim"), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, at[1] + 1.6)
       // Code: folder structure, then real code typing in
-      .fromTo(q(".tree"), { xPercent: 10, autoAlpha: 0 }, { xPercent: 0, autoAlpha: 1, duration: 0.5, ease: "power3.out" }, AT[2])
-      .from(q(".tree li"), { autoAlpha: 0, x: -8, stagger: 0.06, duration: 0.25 }, AT[2] + 0.2)
-      .fromTo(q(".code"), { y: 30, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: "power3.out" }, AT[2] + 0.5)
-      .fromTo(q(".code__src"), { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", stagger: 0.22, duration: 0.3, ease: "none" }, AT[2] + 0.8)
-      // Ship: the site wipes in, then the real footage takes over
-      .to([q(".tree"), q(".code")], { autoAlpha: 0, y: -16, duration: 0.5, ease: "power2.in" }, AT[3])
-      .fromTo(q(".shot"), { clipPath: "inset(0% 0% 100% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 1, ease: "power2.inOut" }, AT[3] + 0.1)
+      .fromTo(q(".tree"), { xPercent: 10, autoAlpha: 0 }, { xPercent: 0, autoAlpha: 1, duration: 0.5, ease: "power3.out" }, at[2])
+      .from(q(".tree li"), { autoAlpha: 0, x: -8, stagger: 0.06, duration: 0.25 }, at[2] + 0.2)
+      .fromTo(q(".code"), { y: 30, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: "power3.out" }, at[2] + 0.5);
+    // Real code typing in, one file (editor tab) after another.
+    const panes = q(".code__pane");
+    files.forEach((_, i) => {
+      const t0 = at[2] + 0.8 + i * PER;
+      if (i > 0) t.to(panes[i - 1], { autoAlpha: 0, y: -8, duration: 0.25 }, t0 - 0.35);
+      t.set(q(".code")[0], { attr: { "data-tab": i } }, t0 - 0.3)
+        .fromTo(panes[i], { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.3 }, t0 - 0.2)
+        .fromTo(panes[i].querySelectorAll(".code__src"), { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", stagger: files.length > 1 ? 0.15 : 0.22, duration: 0.25, ease: "none" }, t0);
+    });
+    // Ship: the site wipes in, then the real footage takes over
+    t.to([q(".tree"), q(".code")], { autoAlpha: 0, y: -16, duration: 0.5, ease: "power2.in" }, at[3])
+      .fromTo(q(".shot"), { clipPath: "inset(0% 0% 100% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 1, ease: "power2.inOut" }, at[3] + 0.1)
       .call(() => {
         if (!video) return;
         if (!video.src) video.src = video.dataset.src!;
         video.currentTime = 0;
         video.play().catch(() => {});
-      }, [], AT[3] + 0.9)
-      .fromTo(q(".ship-video"), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, AT[3] + 1.1);
+      }, [], at[3] + 0.9)
+      .fromTo(q(".ship-video"), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, at[3] + 1.1);
     if (admin) {
       // Behind the storefront: the admin panel the staff use every day.
       t.call(() => {
         if (!admin.src) admin.src = admin.dataset.src!;
         admin.currentTime = 0;
         admin.play().catch(() => {});
-      }, [], AT[3] + 4.4)
-        .fromTo(q(".admin-video"), { autoAlpha: 0, scale: 1.04 }, { autoAlpha: 1, scale: 1, duration: 0.9, ease: "power2.inOut" }, AT[3] + 4.6)
-        .call(() => video?.pause(), [], AT[3] + 5.6)
-        .to(q(".url-a"), { autoAlpha: 0, y: -6, duration: 0.3 }, AT[3] + 4.6)
-        .fromTo(q(".url-b"), { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.3 }, AT[3] + 4.75);
+      }, [], at[3] + 4.4)
+        .fromTo(q(".admin-video"), { autoAlpha: 0, scale: 1.04 }, { autoAlpha: 1, scale: 1, duration: 0.9, ease: "power2.inOut" }, at[3] + 4.6)
+        .call(() => video?.pause(), [], at[3] + 5.6)
+        .to(q(".url-a"), { autoAlpha: 0, y: -6, duration: 0.3 }, at[3] + 4.6)
+        .fromTo(q(".url-b"), { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.3 }, at[3] + 4.75);
     }
     t.to({}, { duration: 0.01 }, end - 0.01);
 
@@ -325,17 +342,27 @@ export default function Theater() {
                   ))}
                 </ul>
               </div>
-              {p.excerpt && (
-                <div className="code" aria-hidden="true">
-                  <p className="code__file">{p.excerpt.file}</p>
-                  <pre><code>
-                    {p.excerpt.lines.map((l, i) => (
-                      <span className="code__line" key={i}>
-                        <span className="code__ln">{i + 1}</span>
-                        <span className="code__src">{l ? highlight(l) : " "}</span>
-                      </span>
+              {filesOf(p).length > 0 && (
+                <div className="code" aria-hidden="true" data-tab="0">
+                  {filesOf(p).length > 1 ? (
+                    <p className="code__tabs">
+                      {filesOf(p).map((f, i) => <span className="code__tab" data-i={i} key={f.file}>{short(f.file)}</span>)}
+                    </p>
+                  ) : (
+                    <p className="code__file">{filesOf(p)[0].file}</p>
+                  )}
+                  <div className="code__panes">
+                    {filesOf(p).map((f) => (
+                      <pre className="code__pane" key={f.file}><code>
+                        {f.lines.map((l, i) => (
+                          <span className="code__line" key={i}>
+                            <span className="code__ln">{i + 1}</span>
+                            <span className="code__src">{l ? highlight(l) : " "}</span>
+                          </span>
+                        ))}
+                      </code></pre>
                     ))}
-                  </code></pre>
+                  </div>
                 </div>
               )}
             </div>
