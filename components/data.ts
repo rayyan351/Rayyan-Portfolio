@@ -222,6 +222,18 @@ export const projects: Project[] = [
 
 export const moreWork = [
   {
+    name: "Yameen Munir",
+    kind: "Portfolio for an AI and data science developer in London",
+    stack: "Next.js, TypeScript, GSAP, Lenis",
+    live: "https://yameenmunir-two.vercel.app",
+  },
+  {
+    name: "Cravings Faisalabad",
+    kind: "Concept website for a street-food cafe, made to pitch the owner",
+    stack: "HTML, CSS, JavaScript",
+    live: "https://cravingsfaisalabad.netlify.app",
+  },
+  {
     name: "Nexus Infinity Tech",
     kind: "Company website, built on contract. Archived after the client retired the domain.",
     stack: "React, GSAP, Three.js",
@@ -262,8 +274,10 @@ export type ReelItem = {
 
 export const reel: ReelItem[] = [
   { id: "boc", name: "Burger O'Clock", kind: "Ordering platform and admin system", video: "/reel/boc.mp4", poster: "/reel/boc.webp", href: "#build-boc", action: "See how it's built", accent: "#f2b705" },
+  { id: "yameen", name: "Yameen Munir", kind: "Portfolio for an AI developer", video: "/reel/yameen.mp4", poster: "/reel/yameen.webp", href: "https://yameenmunir-two.vercel.app", action: "Visit the site", accent: "#c47c5a" },
   { id: "luxscents", name: "LuxScents", kind: "Full-stack perfume store", video: "/reel/luxscents.mp4", poster: "/reel/luxscents.webp", href: "#build-luxscents", action: "See how it's built", accent: "#c9a45c" },
   { id: "cypress", name: "Cypress Grill", kind: "Restaurant website", video: "/reel/cypress.mp4", poster: "/reel/cypress.webp", href: "#build-cypress", action: "See how it's built", accent: "#1fa192" },
+  { id: "cravings", name: "Cravings Faisalabad", kind: "Concept site for a street-food cafe", video: "/reel/cravings.mp4", poster: "/reel/cravings.webp", href: "https://cravingsfaisalabad.netlify.app", action: "Visit the site", accent: "#f07a1a" },
   { id: "beast", name: "BEAST", kind: "Cinematic landing page", video: "/reel/beast.mp4", poster: "/reel/beast.webp", href: "https://cinematiclandingpage.vercel.app", action: "Visit the site", accent: "#d9542b" },
   { id: "functions", name: "Functions Global", kind: "Agency homepage", video: "/reel/functions.mp4", poster: "/reel/functions.webp", href: "#build-functions", action: "See how it's built", accent: "#5b5bd6" },
   { id: "salon", name: "Salon Luxe", kind: "Booking-focused salon site", video: "/reel/salon.mp4", poster: "/reel/salon.webp", href: "https://hair-salon-weld-three.vercel.app", action: "Visit the site", accent: "#c98a7a" },

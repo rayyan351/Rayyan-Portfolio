@@ -1517,8 +1517,15 @@ a {
     grid-column: 1;
     justify-self: center;
   }
+  .reel__dots {
+    width: 100%;
+    max-width: 360px;
+    gap: 6px;
+  }
   .reel__dot {
-    width: 28px;
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
   }
   .reel__kind {
     display: none;
