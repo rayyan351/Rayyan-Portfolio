@@ -17,6 +17,7 @@ export type Project = {
   steps: [string, string, string, string]; // idea, design, code, ship
   accent: string;
   video?: string;
+  admin?: { video: string; poster: string };
   excerpt?: { file: string; lines: string[] };
   wireframe: Rect[];
   tree: TreeLine[];
@@ -26,6 +27,7 @@ export const projects: Project[] = [
   {
     id: "boc",
     video: "/reel/boc.mp4",
+    admin: { video: "/reel/boc-admin.mp4", poster: "/reel/boc-admin.webp" },
     excerpt: { file: "back-end/utils/branchRoutingEngine.js", lines: ["const activeQueueCount = await Order.countDocuments({", "  branch: selectedBranch._id,", "  orderStatus: { $in: ['PENDING', 'PREPARING'] },", "});", "", "const prepTime = 15;", "const travelTime = Math.ceil(distKm * 2.5);", "const queueBuffer = Math.min(Math.floor(activeQueueCount / 2) * 3, 25);", "calculatedETA = prepTime + travelTime + queueBuffer;"] },
     name: "Burger O'Clock",
     kind: "Ordering platform and admin system, internship at CodeLabs",

@@ -567,7 +567,8 @@ a {
 .hl-t { color: #7fa6c2; }
 .hl-f { color: #e7e4dd; }
 
-.ship-video {
+.ship-video,
+.admin-video {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -2676,4 +2677,17 @@ button.more__row {
 @media (prefers-reduced-motion: reduce) {
   .tell__wave span,
   .tell__colon { animation: none; }
+}
+
+/* Storefront address, then the admin panel's, stacked in the same spot */
+.th .frame__url {
+  display: grid;
+  justify-items: center;
+}
+.th .frame__url > span {
+  grid-area: 1 / 1;
+}
+.th .url-b {
+  visibility: hidden;
+  opacity: 0;
 }

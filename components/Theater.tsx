@@ -40,6 +40,7 @@ export default function Theater() {
   const isOpen = useRef(false);
 
   const index = p ? projects.findIndex((x) => x.id === p.id) : -1;
+  const clips = () => Array.from(root.current?.querySelectorAll<HTMLVideoElement>(".ship-video, .admin-video") ?? []);
 
   // Open requests from the reel and the project index.
   useEffect(() => {
@@ -61,7 +62,7 @@ export default function Theater() {
   const close = useCallback(() => {
     const el = root.current;
     tl.current?.kill();
-    el?.querySelector<HTMLVideoElement>(".ship-video")?.pause();
+    el?.querySelectorAll<HTMLVideoElement>("video").forEach((v) => v.pause());
     const finish = () => {
       setP(null);
       isOpen.current = false;
@@ -92,6 +93,9 @@ export default function Theater() {
     const q = gsap.utils.selector(el);
     const frame = q(".th__frame")[0];
     const video = q(".ship-video")[0] as HTMLVideoElement | undefined;
+    const admin = q(".admin-video")[0] as HTMLVideoElement | undefined;
+    // With an admin clip the Ship chapter runs longer: the storefront first, then the admin panel.
+    const end = admin ? AT[3] + 16 : END;
     const fills = q(".th__chapter-fill") as HTMLElement[];
     const crisp = Array.from(el.querySelectorAll<SVGRectElement>(".wire__crisp rect"));
     crisp.forEach((r) => {
@@ -110,8 +114,8 @@ export default function Theater() {
           setStep(s);
         }
         fills.forEach((f, i) => {
-          const end = i < 3 ? AT[i + 1] : END;
-          const k = Math.max(0, Math.min(1, (time - AT[i]) / (end - AT[i])));
+          const stop = i < 3 ? AT[i + 1] : end;
+          const k = Math.max(0, Math.min(1, (time - AT[i]) / (stop - AT[i])));
           f.style.transform = `scaleX(${k})`;
         });
       },
@@ -149,8 +153,20 @@ export default function Theater() {
         video.currentTime = 0;
         video.play().catch(() => {});
       }, [], AT[3] + 0.9)
-      .fromTo(q(".ship-video"), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, AT[3] + 1.1)
-      .to({}, { duration: END - (AT[3] + 1.7) });
+      .fromTo(q(".ship-video"), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, AT[3] + 1.1);
+    if (admin) {
+      // Behind the storefront: the admin panel the staff use every day.
+      t.call(() => {
+        if (!admin.src) admin.src = admin.dataset.src!;
+        admin.currentTime = 0;
+        admin.play().catch(() => {});
+      }, [], AT[3] + 4.4)
+        .fromTo(q(".admin-video"), { autoAlpha: 0, scale: 1.04 }, { autoAlpha: 1, scale: 1, duration: 0.9, ease: "power2.inOut" }, AT[3] + 4.6)
+        .call(() => video?.pause(), [], AT[3] + 5.6)
+        .to(q(".url-a"), { autoAlpha: 0, y: -6, duration: 0.3 }, AT[3] + 4.6)
+        .fromTo(q(".url-b"), { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.3 }, AT[3] + 4.75);
+    }
+    t.to({}, { duration: 0.01 }, end - 0.01);
 
     tl.current = t;
 
@@ -165,7 +181,7 @@ export default function Theater() {
     gsap.set(el, { autoAlpha: 1 });
     const o = origin.current?.getBoundingClientRect();
     const f = frame.getBoundingClientRect();
-    const intro = gsap.timeline({ onComplete: () => { t.play(0); } });
+    const intro = gsap.timeline({ onComplete: () => { if (t.paused() && t.time() > 0) t.play(); else if (t.time() === 0) t.play(0); } });
     intro.fromTo(q(".th__backdrop"), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6, ease: "power2.out" }, 0);
     if (o && o.width > 40) {
       intro.from(q(".th__shell"), {
@@ -203,34 +219,36 @@ export default function Theater() {
     const t = tl.current;
     if (!t) return;
     t.seek(STAGES[i]);
-    if (i < 3) root.current?.querySelector<HTMLVideoElement>(".ship-video")?.pause();
+    if (i < 3) clips().forEach((v) => v.pause());
     setDone(false);
     if (playing) t.play();
   };
   const toggle = () => {
     const t = tl.current;
     if (!t) return;
-    const v = root.current?.querySelector<HTMLVideoElement>(".ship-video");
+    const vs = clips();
     if (done) {
       setDone(false);
       setPlaying(true);
-      v?.pause();
+      vs.forEach((v) => v.pause());
       t.restart();
       return;
     }
     if (playing) {
       t.pause();
-      v?.pause();
+      vs.forEach((v) => v.pause());
     } else {
       t.play();
-      if (step === 3 && v?.src) v.play().catch(() => {});
+      // Resume whichever clip is on screen.
+      const on = vs.filter((v) => v.src && Number(getComputedStyle(v).opacity) > 0.5).pop();
+      if (step === 3 && on) on.play().catch(() => {});
     }
     setPlaying(!playing);
   };
   const next = () => {
     const n = projects[(index + 1) % projects.length];
     tl.current?.kill();
-    root.current?.querySelector<HTMLVideoElement>(".ship-video")?.pause();
+    clips().forEach((v) => v.pause());
     origin.current = null;
     setStep(0);
     setDone(false);
@@ -269,7 +287,10 @@ export default function Theater() {
           <div className="frame th__frame" key={p.id}>
             <div className="frame__bar">
               <span className="frame__stage-label" aria-hidden="true">{STAGES[step]}</span>
-              <span className="frame__url">{host}</span>
+              <span className="frame__url">
+                <span className="url-a">{host}</span>
+                {p.admin && <span className="url-b">{host}/admin</span>}
+              </span>
               <span className="frame__stage-label" aria-hidden="true">{p.year}</span>
             </div>
             <div className="canvas">
@@ -292,6 +313,7 @@ export default function Theater() {
               </div>
               <img className="shot" src={p.shot} alt={p.shotAlt} decoding="async" />
               {p.video && <video className="ship-video" data-src={p.video} poster={p.shot} muted loop playsInline preload="none" aria-hidden="true" tabIndex={-1} />}
+              {p.admin && <video className="admin-video" data-src={p.admin.video} poster={p.admin.poster} muted loop playsInline preload="none" aria-hidden="true" tabIndex={-1} />}
               <div className="tree" aria-hidden="true">
                 <p className="tree__title">Project structure</p>
                 <ul>
