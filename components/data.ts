@@ -303,5 +303,5 @@ export const history: Commit[] = [
 export const contact = {
   email: "rayyanhabib1@gmail.com",
   github: "https://github.com/rayyan351",
-  linkedin: "https://www.linkedin.com/in/muhammad-rayyan-b101a621a",
+  linkedin: "https://www.linkedin.com/in/muhammad-rayyandev",
 };
