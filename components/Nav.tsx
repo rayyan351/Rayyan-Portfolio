@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Sound from "./Sound";
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -16,15 +17,18 @@ export default function Nav() {
     <header className={`nav${scrolled ? " is-scrolled" : ""}`}>
       <div className="wrap nav__inner">
         <a className="nav__name" href="#top">
-          Muhammad Rayyan
+          <span className="nav__first">Muhammad </span>Rayyan
         </a>
-        <nav aria-label="Main">
-          <ul className="nav__links">
-            <li><a href="#work">Work</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
-        </nav>
+        <div className="nav__right">
+          <nav aria-label="Main">
+            <ul className="nav__links">
+              <li><a href="#work">Work</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </nav>
+          <Sound />
+        </div>
       </div>
     </header>
   );
